@@ -1,5 +1,5 @@
 import Link from "next/link"
-import { Mail, MapPin } from "lucide-react"
+import { Mail, MapPin, Phone } from "lucide-react"
 
 const navigation = [
   { name: "홈", href: "/" },
@@ -19,7 +19,7 @@ export function Footer() {
           <div className="space-y-4">
             <h3 className="font-serif text-xl font-bold">협동조합 소이랩</h3>
             <p className="text-sm text-primary-foreground/80">
-              사회혁신을 함께 만드는 대구 기반 사회적협동조합입니다.
+              사회혁신을 함께 만드는 대구 기반 협동조합·사회적기업입니다.
               지역사회와 함께 더 나은 미래를 만들어갑니다.
             </p>
           </div>
@@ -46,14 +46,20 @@ export function Footer() {
             <h4 className="font-medium mb-4">연락처</h4>
             <ul className="space-y-3">
               <li className="flex items-center gap-2 text-sm text-primary-foreground/80">
+                <Phone className="h-4 w-4" />
+                <a href="tel:053-941-9003" className="hover:text-primary-foreground transition-colors">
+                  053-941-9003
+                </a>
+              </li>
+              <li className="flex items-center gap-2 text-sm text-primary-foreground/80">
                 <Mail className="h-4 w-4" />
-                <a href="mailto:soilab@soilab.kr" className="hover:text-primary-foreground transition-colors">
-                  soilab@soilab.kr
+                <a href="mailto:soilabcoop@gmail.com" className="hover:text-primary-foreground transition-colors">
+                  soilabcoop@gmail.com
                 </a>
               </li>
               <li className="flex items-start gap-2 text-sm text-primary-foreground/80">
                 <MapPin className="h-4 w-4 mt-0.5" />
-                <span>대구광역시</span>
+                <span>대구광역시 북구 대현로 3, 2층</span>
               </li>
             </ul>
           </div>

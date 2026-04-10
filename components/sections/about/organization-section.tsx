@@ -4,8 +4,13 @@ import { Card, CardContent } from "@/components/ui/card"
 const executives = [
   {
     role: "이사장",
-    name: "홍길동",
+    name: "강아름",
     description: "조합의 대표로서 전체 운영을 총괄하며, 대외적으로 조합을 대표합니다.",
+  },
+  {
+    role: "상임이사",
+    name: "장종욱",
+    description: "사업 전반을 기획·운영하며, 파트너 퍼실리테이터 네트워크를 총괄합니다.",
   },
 ]
 
@@ -99,12 +104,6 @@ export function OrganizationSection() {
           </div>
         </div>
 
-        {/* Note */}
-        <div className="mt-12 rounded-lg bg-secondary/50 p-6 text-center">
-          <p className="text-sm text-muted-foreground">
-            * 위 정보는 예시이며, 실제 조직 구성과 다를 수 있습니다.
-          </p>
-        </div>
       </div>
     </section>
   )

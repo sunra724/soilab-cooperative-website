@@ -10,8 +10,8 @@ export function AboutHero() {
             소이랩 <span className="text-primary">소개</span>
           </h1>
           <p className="mt-6 text-lg leading-relaxed text-muted-foreground">
-            협동조합 소이랩은 대구를 기반으로 사회문제 해결과 
-            지역 발전을 위해 활동하는 사회적협동조합입니다.
+            협동조합 소이랩은 대구를 기반으로 사회문제 해결과
+            지역 발전을 위해 활동하는 협동조합·사회적기업입니다.
           </p>
         </div>
       </div>

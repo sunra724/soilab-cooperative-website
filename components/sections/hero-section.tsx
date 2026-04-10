@@ -15,7 +15,7 @@ export function HeroSection() {
           <p className="mt-6 text-lg leading-relaxed text-muted-foreground">
             협동조합 소이랩은 대구를 기반으로 ESG 컨설팅, 리빙랩, 청년정책,
             도시재생, 인지건강디자인 분야에서 지역사회와 함께 
-            더 나은 미래를 만들어가는 사회적협동조합입니다.
+            더 나은 미래를 만들어가는 협동조합·사회적기업입니다.
           </p>
           <div className="mt-10 flex flex-col gap-4 sm:flex-row sm:justify-center">
             <Button size="lg" asChild>
