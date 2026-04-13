@@ -22,10 +22,10 @@ export function ServicesCTA() {
               className="w-full sm:w-auto"
               asChild
             >
-              <Link href="/contact">
+              <a href="mailto:soilabcoop@gmail.com">
                 <Mail className="mr-2 h-5 w-5" />
                 문의하기
-              </Link>
+              </a>
             </Button>
             <Button
               size="lg"
