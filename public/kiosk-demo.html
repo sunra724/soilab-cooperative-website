@@ -1,0 +1,415 @@
+<!DOCTYPE html><html lang="ko"><head><meta charset="utf-8">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--forest:#2D6A4F;--deep:#1B4332;--mid:#40916C;--terra:#C75B3A;--terraSoft:#E08A6E;
+--canvas:#F2F1ED;--paper:#FFFFFF;--ink:#23291F;--muted:#6A7064;--line:#E2E0D8}
+html,body{height:100%;background:#0E1F18;overflow:hidden;cursor:none;
+font-family:'Noto Sans CJK KR',sans-serif;color:var(--ink)}
+.serif{font-family:'Noto Serif CJK KR',serif}
+.pen{font-family:'Nanum Pen Script',cursive}
+#stage{position:absolute;top:50%;left:50%;width:1280px;height:720px;
+transform-origin:center;background:
+radial-gradient(120% 90% at 80% -10%, #E9F0EA 0%, var(--canvas) 46%, var(--canvas) 100%);
+overflow:hidden}
+/* top + bottom chrome */
+.topbar{position:absolute;top:0;left:0;right:0;height:64px;background:var(--deep);color:#fff;
+display:flex;align-items:center;justify-content:space-between;padding:0 40px;z-index:50}
+.topbar .b{font-size:23px;font-weight:900;letter-spacing:.01em}
+.topbar .b .en{color:var(--terraSoft);font-weight:700;letter-spacing:.16em;font-size:18px;margin-left:8px}
+.topbar .f{font-size:14px;color:#C9D6CB;font-weight:600}
+.seg{position:absolute;bottom:26px;left:50%;transform:translateX(-50%);display:flex;gap:7px;z-index:50}
+.seg i{width:22px;height:5px;border-radius:3px;background:#CFD3C8;transition:background .3s,width .3s}
+.seg i.on{background:var(--terra);width:34px}
+/* scenes */
+.scene{position:absolute;inset:64px 0 0 0;opacity:0;transition:opacity .55s ease;
+display:flex;flex-direction:column;justify-content:center;padding:0 70px;pointer-events:none}
+.scene.on{opacity:1}
+@keyframes rise{from{opacity:0;transform:translateY(26px)}to{opacity:1;transform:none}}
+@keyframes pop{from{opacity:0;transform:scale(.9)}to{opacity:1;transform:none}}
+@keyframes barfill{from{width:0}}
+@keyframes scan{0%{top:8px}100%{top:calc(100% - 14px)}}
+@keyframes wipe{from{clip-path:inset(0 100% 0 0)}to{clip-path:inset(0 0 0 0)}}
+.on .r{animation:rise .7s ease both}
+.on .r2{animation:rise .7s .15s ease both}
+.on .r3{animation:rise .7s .3s ease both}
+.eyebrow{display:inline-block;align-self:flex-start;font-size:17px;font-weight:800;color:#fff;
+background:var(--terra);padding:7px 16px;border-radius:6px;letter-spacing:.02em}
+/* S1 title */
+.t-h{font-size:84px;font-weight:900;line-height:1.05;margin-top:26px;color:var(--deep)}
+.t-h .hl{color:var(--terra)}
+.t-sub{font-size:26px;color:var(--muted);margin-top:24px;font-weight:500;line-height:1.5}
+.t-sub b{color:var(--forest);font-weight:800}
+/* section card scenes */
+.sc-wrap{display:flex;align-items:center;gap:30px}
+.sc-no{font-family:'Noto Serif CJK KR';font-size:130px;font-weight:900;color:var(--terra);line-height:.8}
+.sc-tx .k{font-size:54px;font-weight:900;color:var(--deep);line-height:1.1}
+.sc-tx .d{font-size:24px;color:var(--muted);margin-top:14px;font-weight:500}
+.sc-bar{height:6px;background:var(--terra);margin-top:22px;border-radius:3px;animation:wipe .7s ease both}
+/* OCR */
+.ocr{display:grid;grid-template-columns:1fr 1.05fr;gap:40px;align-items:center}
+.sheet{position:relative;background:#FFFDF7;border:1.5px solid #E7E2D2;border-radius:12px;
+padding:30px 34px;box-shadow:0 18px 40px rgba(27,67,50,.12);transform:rotate(-1.2deg)}
+.sheet .cap{position:absolute;top:-14px;left:22px;background:var(--forest);color:#fff;font-size:14px;
+font-weight:800;padding:4px 12px;border-radius:20px}
+.sheet h5{font-size:23px;color:#324; margin-bottom:14px;font-weight:800;color:var(--deep)}
+.sheet .ln{font-family:'Nanum Pen Script',cursive;font-size:33px;color:#2B3A52;line-height:1.45}
+.sheet .ln b{color:#1d2b40}
+.scanline{position:absolute;left:8px;right:8px;height:5px;border-radius:4px;
+background:linear-gradient(90deg,transparent,var(--terra),transparent);box-shadow:0 0 16px var(--terraSoft)}
+.on .scanline{animation:scan 2.1s .3s ease-in-out both}
+.fields{display:flex;flex-direction:column;gap:13px}
+.fhead{font-size:18px;font-weight:800;color:var(--forest);letter-spacing:.02em;margin-bottom:2px}
+.field{background:var(--paper);border:1px solid var(--line);border-radius:11px;padding:14px 18px;
+display:flex;align-items:center;justify-content:space-between;opacity:0}
+.on .field{animation:rise .55s ease both}
+.on .f1{animation-delay:1.7s}.on .f2{animation-delay:1.95s}.on .f3{animation-delay:2.2s}
+.on .f4{animation-delay:2.45s}.on .f5{animation-delay:2.7s}
+.field .lab{font-size:15px;color:var(--muted);font-weight:700}
+.field .val{font-size:21px;color:var(--ink);font-weight:800}
+.conf{display:flex;align-items:center;gap:10px}
+.conf .num{font-size:16px;font-weight:800;color:var(--forest)}
+.conf .track{width:78px;height:8px;background:#E7ECE6;border-radius:5px;overflow:hidden}
+.conf .fillb{height:100%;background:var(--forest);border-radius:5px;width:var(--w)}
+.on .conf .fillb{animation:barfill 1s 2.6s ease both}
+.tagrow{display:flex;gap:9px;flex-wrap:wrap;margin-top:6px}
+.tag{background:#EAF1EC;color:var(--forest);font-size:16px;font-weight:800;padding:6px 13px;border-radius:20px}
+/* result chips scene */
+.result{text-align:center}
+.result .big{font-size:44px;font-weight:900;color:var(--deep);line-height:1.2}
+.result .big .hl{color:var(--terra)}
+.chips{display:flex;gap:16px;justify-content:center;margin-top:34px;flex-wrap:wrap}
+.chip{background:var(--paper);border:1.5px solid var(--line);border-radius:14px;padding:20px 26px;
+min-width:200px;box-shadow:0 10px 24px rgba(27,67,50,.07)}
+.chip .n{font-family:'Noto Serif CJK KR';font-size:40px;font-weight:900;color:var(--terra)}
+.chip .l{font-size:17px;color:var(--muted);font-weight:700;margin-top:6px}
+/* pipeline */
+.pipe{display:flex;align-items:center;justify-content:center;gap:0;margin-top:18px}
+.node{width:188px;height:148px;background:var(--paper);border:1.5px solid var(--line);border-radius:16px;
+display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;
+box-shadow:0 12px 26px rgba(27,67,50,.08);opacity:.35;
+transition:opacity .45s,transform .45s,border-color .45s;flex:0 0 auto}
+.scene.on .node{opacity:1;transform:translateY(-6px);border-color:var(--mid)}
+.node .ic{width:54px;height:54px;border-radius:13px;background:#EAF1EC;display:flex;align-items:center;
+justify-content:center;font-size:28px;transition:background .45s,color .45s}
+.scene.on .node .ic{background:var(--forest);color:#fff}
+.node .nm{font-size:19px;font-weight:800;color:var(--deep)}
+.conn{width:54px;height:4px;border-radius:3px;flex:0 0 auto;
+background:linear-gradient(90deg,var(--terra),var(--terra)) left/0% 100% no-repeat, #D7DCD2;
+transition:background-size .5s}
+.scene.on .conn{background-size:100% 100%}
+.on .n1,.on .n1 .ic{transition-delay:.2s}.on .c1{transition-delay:.6s}
+.on .n2,.on .n2 .ic{transition-delay:.9s}.on .c2{transition-delay:1.3s}
+.on .n3,.on .n3 .ic{transition-delay:1.6s}.on .c3{transition-delay:2.0s}
+.on .n4,.on .n4 .ic{transition-delay:2.3s}
+.pipe-cap{text-align:center;font-size:24px;font-weight:800;color:var(--forest);margin-top:30px;opacity:0}
+.on .pipe-cap{animation:rise .6s 2.9s ease both}
+/* slack */
+.slack{max-width:760px;margin:0 auto;width:100%;background:var(--paper);border:1.5px solid var(--line);
+border-radius:16px;box-shadow:0 16px 36px rgba(27,67,50,.12);overflow:hidden}
+.slack .hd{background:#3F0E3F;color:#fff;padding:14px 22px;font-size:18px;font-weight:800;display:flex;
+align-items:center;gap:10px}
+.slack .hd .dot{width:11px;height:11px;border-radius:50%;background:#2BAC76}
+.slack .body{padding:10px 22px 20px}
+.msg{display:flex;gap:14px;padding:14px 0;border-bottom:1px solid #F0EEE8;opacity:0}
+.msg:last-child{border-bottom:none}
+.on .m1{animation:rise .5s .2s ease both}.on .m2{animation:rise .5s .6s ease both}
+.on .m3{animation:rise .5s 1.0s ease both}
+.av{width:42px;height:42px;border-radius:10px;background:var(--forest);color:#fff;flex:0 0 auto;
+display:flex;align-items:center;justify-content:center;font-weight:900;font-size:15px}
+.msg .who{font-size:15px;font-weight:800;color:var(--ink)}
+.msg .who span{font-size:13px;color:#9AA08F;font-weight:600;margin-left:8px}
+.msg .key{display:inline-block;font-size:13px;font-weight:800;color:#fff;background:var(--terra);
+padding:2px 9px;border-radius:6px;margin-right:8px}
+.msg .tx{font-size:18px;color:#333;margin-top:5px;line-height:1.4}
+.slack-cap{text-align:center;font-size:22px;font-weight:800;color:var(--forest);margin-top:24px;opacity:0}
+.on .slack-cap{animation:rise .6s 1.5s ease both}
+/* ===== added content scenes ===== */
+.shead{font-size:31px;font-weight:900;color:var(--deep);margin-bottom:26px;line-height:1.25}
+.shead .hl{color:var(--terra)}
+.shead small{display:block;font-size:18px;color:var(--muted);font-weight:600;margin-top:9px}
+.stagger>*{opacity:0}
+.on .stagger>*{animation:rise .6s ease both}
+.on .stagger>*:nth-child(1){animation-delay:.15s}
+.on .stagger>*:nth-child(2){animation-delay:.33s}
+.on .stagger>*:nth-child(3){animation-delay:.51s}
+.on .stagger>*:nth-child(4){animation-delay:.69s}
+.on .stagger>*:nth-child(5){animation-delay:.87s}
+.on .stagger>*:nth-child(6){animation-delay:1.05s}
+.ov{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
+.ovcard{background:var(--paper);border:1.5px solid var(--line);border-radius:16px;padding:30px 26px;
+box-shadow:0 12px 26px rgba(27,67,50,.07)}
+.ovcard .oic{width:60px;height:60px;border-radius:15px;background:#EAF1EC;display:flex;align-items:center;
+justify-content:center;font-size:30px;margin-bottom:18px}
+.ovcard .ot{font-size:25px;font-weight:900;color:var(--deep)}
+.ovcard .od{font-size:17px;color:var(--muted);margin-top:10px;font-weight:600;line-height:1.45}
+.road2{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+.rstep{background:var(--paper);border:1.5px solid var(--line);border-radius:16px;padding:24px 20px;
+box-shadow:0 10px 24px rgba(27,67,50,.07)}
+.rstep .rn{width:46px;height:46px;border-radius:50%;background:var(--forest);color:#fff;
+font-family:'Noto Serif CJK KR';font-size:24px;font-weight:900;display:flex;align-items:center;
+justify-content:center;margin-bottom:16px}
+.rstep.now .rn{background:var(--terra)}
+.rstep .rt{font-size:22px;font-weight:900;color:var(--deep);line-height:1.25}
+.rstep .rd{font-size:15px;color:var(--muted);margin-top:10px;font-weight:600;line-height:1.4}
+.rstep .rp{display:inline-block;margin-top:14px;font-size:13px;font-weight:800;padding:4px 11px;
+border-radius:20px;background:#EAF1EC;color:var(--forest)}
+.rstep.now .rp{background:#F7E3DB;color:var(--terra)}
+.esg{display:flex;flex-direction:column;gap:14px}
+.tier{display:flex;align-items:center;gap:22px;background:var(--paper);border:1.5px solid var(--line);
+border-radius:14px;padding:20px 28px;box-shadow:0 8px 20px rgba(27,67,50,.06)}
+.tier .lv{font-family:'Noto Serif CJK KR';font-size:30px;font-weight:900;color:#fff;width:78px;height:62px;
+border-radius:12px;display:flex;align-items:center;justify-content:center;flex:0 0 auto}
+.tier.l1 .lv{background:var(--mid)}.tier.l2 .lv{background:var(--forest)}.tier.l3 .lv{background:var(--terra)}
+.tier .tt{font-size:24px;font-weight:900;color:var(--deep)}
+.tier .td{font-size:17px;color:var(--muted);font-weight:600;margin-top:4px}
+.grid6{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.gcard{background:var(--paper);border:1.5px solid var(--line);border-radius:14px;padding:22px 22px;
+box-shadow:0 8px 20px rgba(27,67,50,.06)}
+.gcard .gt{font-size:21px;font-weight:900;color:var(--deep)}
+.gcard .gd{font-size:15px;color:var(--muted);margin-top:8px;font-weight:600;line-height:1.4}
+.found2{display:grid;grid-template-columns:1.3fr 1fr;gap:26px;align-items:stretch}
+.found2 .fl{background:var(--deep);color:#fff;border-radius:18px;padding:34px}
+.found2 .fl h4{font-size:24px;font-weight:900;margin-bottom:22px}
+.recov{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:22px}
+.recov .rr{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.3);border-radius:30px;
+padding:10px 20px;font-size:21px;font-weight:800}
+.recov .rs{color:var(--terraSoft);font-size:22px;font-weight:900}
+.found2 .fl p{font-size:17px;line-height:1.55;color:#D7E0D8}
+.found2 .fr{display:flex;flex-direction:column;gap:14px;justify-content:center}
+.stat2{background:var(--paper);border:1.5px solid var(--line);border-radius:14px;padding:20px 26px;
+display:flex;align-items:baseline;gap:16px}
+.stat2 .sb{font-family:'Noto Serif CJK KR';font-size:38px;font-weight:900;color:var(--terra);line-height:1}
+.stat2 .sl{font-size:18px;font-weight:700;color:var(--deep)}
+/* closing */
+.close{display:grid;grid-template-columns:1.5fr .8fr;gap:40px;align-items:center}
+.close .h{font-size:64px;font-weight:900;color:var(--deep);line-height:1.12}
+.close .h .hl{color:var(--terra)}
+.close .s{font-size:25px;color:var(--muted);margin-top:22px;font-weight:600;line-height:1.5}
+.close .org{font-size:22px;color:var(--forest);font-weight:900;margin-top:26px}
+.qrbox{text-align:center}
+.qrbox img{width:200px;height:200px;border-radius:14px;box-shadow:0 12px 30px rgba(27,67,50,.14)}
+.qrbox .c{font-size:18px;font-weight:800;color:var(--deep);margin-top:14px}
+</style></head>
+<body>
+<div id="stage">
+  <div class="topbar">
+    <div class="b serif">협동조합 소이랩 <span class="en">SOILAB</span></div>
+    <div class="f">제6회 한일 리빙랩 네트워크 포럼 · 2026.6.26 세종</div>
+  </div>
+
+  <!-- S1 -->
+  <div class="scene" data-d="4500">
+    <span class="eyebrow r">현장 리빙랩 × AI</span>
+    <div class="t-h serif r2">리빙랩을 <span class="hl">진화</span>시키는<br>AI 에이전트</div>
+    <div class="t-sub r3">사람이 하던 리빙랩의 반복 업무를, <b>소이랩은 자동화</b>로 풀어냅니다.</div>
+  </div>
+
+  <!-- overview -->
+  <div class="scene" data-d="5000">
+    <div class="shead r">사회문제를 <span class="hl">리빙랩</span>으로 푸는 협동조합
+      <small>2013년부터 대구에서 · 청년 · 사회적경제 · 도시재생</small></div>
+    <div class="ov stagger">
+      <div class="ovcard"><div class="oic">🌱</div><div class="ot">고립·은둔 청년</div>
+        <div class="od">회복부터 일경험까지, 현장에서 동행</div></div>
+      <div class="ovcard"><div class="oic">📊</div><div class="ot">사회적경제 · ESG</div>
+        <div class="od">중소기업 ESG 진단과 컨설팅</div></div>
+      <div class="ovcard"><div class="oic">🏙️</div><div class="ot">리빙랩 · 도시재생</div>
+        <div class="od">주민과 함께 지역 문제를 실험</div></div>
+    </div>
+  </div>
+
+  <!-- roadmap -->
+  <div class="scene" data-d="6000">
+    <div class="shead r">AI 에이전트 로드맵 — <span class="hl">반복 업무부터 자동화</span>
+      <small>사람 손이 가던 일을 단계적으로 AI가 넘겨받습니다</small></div>
+    <div class="road2 stagger">
+      <div class="rstep now"><div class="rn">1</div><div class="rt">지식 RAG<br>에이전트</div>
+        <div class="rd">조직 지식을 검색·답변</div><div class="rp">우선 추진</div></div>
+      <div class="rstep"><div class="rn">2</div><div class="rt">조달·제안서<br>에이전트</div>
+        <div class="rd">RFP 역설계 → 초안 → HWPX</div><div class="rp">설계 완료</div></div>
+      <div class="rstep"><div class="rn">3</div><div class="rt">ESG 컨설팅<br>에이전트</div>
+        <div class="rd">K-ESG 진단 자동화</div><div class="rp">아키텍처</div></div>
+      <div class="rstep"><div class="rn">4</div><div class="rt">사례관리<br>지원 에이전트</div>
+        <div class="rd">고립청년 사례 기록 보조</div><div class="rp">로드맵</div></div>
+    </div>
+  </div>
+
+  <!-- S2 -->
+  <div class="scene" data-d="2500"><div class="sc-wrap">
+    <div class="sc-no serif r">01</div>
+    <div class="sc-tx"><div class="k r2">워크숍 디지털화</div>
+      <div class="d r3">손글씨 워크시트 → 구조화된 데이터</div>
+      <div class="sc-bar"></div></div>
+  </div></div>
+
+  <!-- S3 OCR problem -->
+  <div class="scene" data-d="3500"><div class="ocr">
+    <div class="sheet r">
+      <span class="cap">현장 워크시트</span>
+      <h5 class="serif">N.E.S.T. 리빙랩 · 아이디어 시트</h5>
+      <div class="ln">모둠: <b>3모둠 (청년 5명)</b><br>주제: <b>우리 동네 빈집 활용</b><br>
+      아이디어: 빈집 → 청년 창작공간<br>　1층 카페 · 2층 작업실<br>필요: 임대협의 · 안전점검 · 초기비용</div>
+    </div>
+    <div class="r2" style="font-size:30px;font-weight:800;color:var(--muted);line-height:1.5">
+      손으로 쓴 워크시트 수십 장,<br><b style="color:var(--terra)">그대로 캐비닛에 잠듭니다.</b></div>
+  </div></div>
+
+  <!-- S4 OCR scan -->
+  <div class="scene" data-d="6000"><div class="ocr">
+    <div class="sheet">
+      <span class="cap">읽는 중…</span>
+      <div class="scanline"></div>
+      <h5 class="serif">N.E.S.T. 리빙랩 · 아이디어 시트</h5>
+      <div class="ln">모둠: <b>3모둠 (청년 5명)</b><br>주제: <b>우리 동네 빈집 활용</b><br>
+      아이디어: 빈집 → 청년 창작공간<br>　1층 카페 · 2층 작업실<br>필요: 임대협의 · 안전점검 · 초기비용</div>
+    </div>
+    <div class="fields">
+      <div class="fhead">Claude Vision · 자동 추출 결과</div>
+      <div class="field f1"><span class="lab">주제</span><span class="val">빈집 활용</span></div>
+      <div class="field f2"><span class="lab">카테고리</span><span class="val">도시재생 · 청년공간</span></div>
+      <div class="field f3"><span class="lab">핵심 아이디어</span><span class="val">2건 추출</span></div>
+      <div class="field f4"><span class="lab">실행 과제</span><span class="val">임대 · 안전 · 비용</span></div>
+      <div class="field f5"><span class="lab">인식 신뢰도</span>
+        <span class="conf"><span class="num">97%</span>
+          <span class="track"><span class="fillb" style="--w:97%"></span></span></span></div>
+      <div class="tagrow r3"><span class="tag">#빈집</span><span class="tag">#청년공간</span>
+        <span class="tag">#도시재생</span></div>
+    </div>
+  </div></div>
+
+  <!-- S5 result -->
+  <div class="scene" data-d="3000"><div class="result">
+    <div class="big serif r">현장의 손글씨가 <span class="hl">검색·분석 가능한 데이터</span>로</div>
+    <div class="chips">
+      <div class="chip r"><div class="n serif">초</div><div class="l">단위로 자동 구조화</div></div>
+      <div class="chip r2"><div class="n serif">신뢰도</div><div class="l">점수로 검수 우선순위</div></div>
+      <div class="chip r3"><div class="n serif">태그</div><div class="l">주제·과제 자동 분류</div></div>
+    </div>
+  </div></div>
+
+  <!-- S6 -->
+  <div class="scene" data-d="2500"><div class="sc-wrap">
+    <div class="sc-no serif r">02</div>
+    <div class="sc-tx"><div class="k r2">자동 뉴스 모니터링</div>
+      <div class="d r3">매일 아침, 사람 손 없이 동향 수집</div>
+      <div class="sc-bar"></div></div>
+  </div></div>
+
+  <!-- S7 pipeline -->
+  <div class="scene" data-d="6000">
+    <div class="pipe">
+      <div class="node n1"><div class="ic">🔔</div><div class="nm">Google Alerts</div></div>
+      <div class="conn c1"></div>
+      <div class="node n2"><div class="ic">⚙️</div><div class="nm">Apps Script</div></div>
+      <div class="conn c2"></div>
+      <div class="node n3"><div class="ic">✦</div><div class="nm">Claude API</div></div>
+      <div class="conn c3"></div>
+      <div class="node n4"><div class="ic">💬</div><div class="nm">Slack</div></div>
+    </div>
+    <div class="pipe-cap">키워드 10여 개 · 매일 오전 자동 수집 → 요약 → 배포</div>
+  </div>
+
+  <!-- S8 slack -->
+  <div class="scene" data-d="3500">
+    <div class="slack">
+      <div class="hd"><span class="dot"></span># 소셜-뉴스-브리핑 · 오늘의 동향</div>
+      <div class="body">
+        <div class="msg m1"><div class="av">AI</div><div>
+          <div class="who">소이랩 브리핑 봇 <span>오전 10:42</span></div>
+          <div class="tx"><span class="key">고립청년</span>청년 사회적 고립 지원 예산·정책 동향 요약</div></div></div>
+        <div class="msg m2"><div class="av">AI</div><div>
+          <div class="who">소이랩 브리핑 봇 <span>오전 10:42</span></div>
+          <div class="tx"><span class="key">사회적경제</span>사회연대경제 입법·지원사업 신규 공고 정리</div></div></div>
+        <div class="msg m3"><div class="av">AI</div><div>
+          <div class="who">소이랩 브리핑 봇 <span>오전 10:42</span></div>
+          <div class="tx"><span class="key">리빙랩</span>스마트시티·리빙랩 R&D 발주 키워드 포착</div></div></div>
+      </div>
+    </div>
+    <div class="slack-cap">읽기 좋은 요약본이 매일 팀 채널로 도착합니다</div>
+  </div>
+
+  <!-- demo03 card -->
+  <div class="scene" data-d="2500"><div class="sc-wrap">
+    <div class="sc-no serif r">03</div>
+    <div class="sc-tx"><div class="k r2">ESG 진단 자동화</div>
+      <div class="d r3">K-ESG 진단 → 신뢰 단계별 인증</div>
+      <div class="sc-bar"></div></div>
+  </div></div>
+
+  <!-- esg ladder -->
+  <div class="scene" data-d="5500">
+    <div class="shead r">신뢰 단계로 쌓는 <span class="hl">ESG 인증</span>
+      <small>자가진단에서 외부심사까지, AI가 사람의 판단을 돕습니다</small></div>
+    <div class="esg stagger">
+      <div class="tier l1"><div class="lv">L1</div><div><div class="tt">자가 진단</div>
+        <div class="td">기업이 직접 입력 · 즉시 현황 파악</div></div></div>
+      <div class="tier l2"><div class="lv">L2</div><div><div class="tt">AI 보조 + 사람 검토</div>
+        <div class="td">Claude가 근거를 정리하고, 컨설턴트가 확정</div></div></div>
+      <div class="tier l3"><div class="lv">L3</div><div><div class="tt">제3자 외부 심사</div>
+        <div class="td">독립 검증으로 신뢰도 최상위</div></div></div>
+    </div>
+  </div>
+
+  <!-- tools breadth -->
+  <div class="scene" data-d="5000">
+    <div class="shead r">그 외에도, <span class="hl">현장 업무 곳곳</span>에서 작동합니다</div>
+    <div class="grid6 stagger">
+      <div class="gcard"><div class="gt">콘텐츠 공장</div><div class="gd">Form → Claude → 6종 콘텐츠 자동 생성</div></div>
+      <div class="gcard"><div class="gt">제안서·HWPX 에이전트</div><div class="gd">RFP 역설계 → 섹션 초안 → 한글 문서</div></div>
+      <div class="gcard"><div class="gt">나라장터 모니터링</div><div class="gd">키워드 자동 수집 → 입찰 기회 알림</div></div>
+      <div class="gcard"><div class="gt">soilab-youth.kr</div><div class="gd">고립은둔청년 현장 콘텐츠 허브</div></div>
+      <div class="gcard"><div class="gt">청년–기업 매칭</div><div class="gd">bridge 대시보드 · 양방향 매칭</div></div>
+      <div class="gcard"><div class="gt">지식 RAG 검색</div><div class="gd">사업·정책 문서를 묻고 답한다</div></div>
+    </div>
+  </div>
+
+  <!-- foundation -->
+  <div class="scene" data-d="5500">
+    <div class="shead r">AI는 <span class="hl">13년의 현장</span> 위에 선다</div>
+    <div class="found2">
+      <div class="fl r">
+        <h4>고립은둔청년 회복 리빙랩 · &lsquo;다시, 봄&rsquo;</h4>
+        <div class="recov"><span class="rr">안전</span><span class="rs">→</span><span class="rr">일상</span>
+          <span class="rs">→</span><span class="rr">관계</span><span class="rs">→</span><span class="rr">도약</span></div>
+        <p>청년이 다시 일상과 관계로 돌아오는 경로를 리빙랩으로 설계하고,<br>그 현장 기록을 AI가 잇습니다.</p>
+      </div>
+      <div class="fr stagger">
+        <div class="stat2"><span class="sb">2013</span><span class="sl">대구 기반 협동조합 설립</span></div>
+        <div class="stat2"><span class="sb">26</span><span class="sl">개 기관 고립청년 협의체</span></div>
+        <div class="stat2"><span class="sb">위탁</span><span class="sl">남구청년센터 운영</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- S9 closing -->
+  <div class="scene" data-d="4500"><div class="close">
+    <div>
+      <div class="h serif r">현장 리빙랩 <span class="hl">×</span> AI</div>
+      <div class="s r2">설계가 아니라, <b style="color:var(--forest)">이미 현장에서 돌아갑니다.</b><br>더 궁금하시면 QR로 만나보세요.</div>
+      <div class="org r3">협동조합 소이랩 · 대구</div>
+    </div>
+    <div class="qrbox r2"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAT8AAAE/AQMAAAAKaFboAAAABlBMVEUbQzL///+JuX82AAABfElEQVR42u2aMQ7CMAxFDR0y9ggchaPRo3EUjtCxA2qI7cQEsbBQ5UvfS6Nilj7Z/t+t5N9iFyYykYl/S3xKi0u5s4pcN//7Gj/c8n6WH4OJBycawpvzlEs5KsJ2PPn9JxGOj1DrLTm3UpjtWBDetTaJEAqhzLvdfQgRQiLMeSkIu0ZKhGizUDVM4ZY4C9EQhiKtpZdC2VCRQiDsQmkawm/3wecIYyrKtQ5ApZm3cpmIEEXO5MdkcsbCuHVHPsexG2kbgKFI1VT0/oIIh2+ku1ehePesY3HO2kipSFHkjA1AX5tywQY6C53mMhtNHYuVZj3yOQ6O0PcwKlzWXoZyFkIhTLXesimbGteNCzYYhOoLbQ/jY7GF61Q2UqDtjLn8LQx/LGqIcOwqbKG+UD7W3IaQjRTBF8abivayqfXUREWKYyre2xn5nIVCRYqFsL6p6BY1NBVoVdhZe1M2NBVos1BCw9iam3IGTJHG50/d+0IihPKF/FKaiUw8PvEFOnMB2ZxSCjgAAAAASUVORK5CYII="><div class="c">soilab-youth.kr</div></div>
+  </div></div>
+
+  <div class="seg" id="seg"></div>
+</div>
+<script>
+function fit(){var s=document.getElementById('stage');
+var k=Math.min(innerWidth/1280, innerHeight/720);
+s.style.transform='translate(-50%,-50%) scale('+k+')';}
+addEventListener('resize',fit);fit();
+var scenes=[].slice.call(document.querySelectorAll('.scene'));
+var seg=document.getElementById('seg');
+scenes.forEach(function(){var i=document.createElement('i');seg.appendChild(i);});
+var dots=[].slice.call(seg.children);
+var i=0;
+function play(){
+  scenes.forEach(function(s){s.classList.remove('on');});
+  dots.forEach(function(d){d.classList.remove('on');});
+  var s=scenes[i];void s.offsetWidth;s.classList.add('on');dots[i].classList.add('on');
+  var d=parseInt(s.dataset.d,10)||4000;
+  setTimeout(function(){i=(i+1)%scenes.length;play();},d);
+}
+play();
+</script>
+</body></html>
