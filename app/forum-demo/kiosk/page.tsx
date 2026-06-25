@@ -1,12 +1,10 @@
-import fs from "node:fs";
-   import path from "node:path";
+export const metadata = { title: "협동조합 소이랩 · AI 리빙랩 데모" };
 
-   export const dynamic = "force-static";
-
-   export default function KioskPage() {
-     const html = fs.readFileSync(
-       path.join(process.cwd(), "public/forum-demo/kiosk.html"),
-       "utf-8"
-     );
-     return <div dangerouslySetInnerHTML={{ __html: html }} />;
-   }
+export default function KioskPage() {
+  return (
+    <iframe
+      src="/forum-demo/kiosk.html"
+      style={{ position: "fixed", inset: 0, width: "100%", height: "100%", border: "none" }}
+    />
+  );
+}
