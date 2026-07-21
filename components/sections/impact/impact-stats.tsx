@@ -1,37 +1,40 @@
 import { Briefcase, Users, Building, Calendar } from "lucide-react"
 
-const stats = [
-  {
-    value: "150",
-    suffix: "건",
-    label: "수행 사업",
-    description: "설립 이후 완료한 프로젝트",
-    icon: Briefcase,
-  },
-  {
-    value: "50,000",
-    suffix: "명+",
-    label: "누적 수혜자",
-    description: "프로그램 참여 및 서비스 이용자",
-    icon: Users,
-  },
-  {
-    value: "30",
-    suffix: "개+",
-    label: "협력기관",
-    description: "함께하는 기관 및 단체",
-    icon: Building,
-  },
-  {
-    value: "8",
-    suffix: "년",
-    label: "수행연도",
-    description: "2018년 설립 이후",
-    icon: Calendar,
-  },
-]
+const foundingYear = 2012
 
 export function ImpactStats() {
+  const activityYears = new Date().getFullYear() - foundingYear
+  const stats = [
+    {
+      value: "150",
+      suffix: "건+",
+      label: "수행 사업",
+      description: "활동 시작 이후 완료한 프로젝트",
+      icon: Briefcase,
+    },
+    {
+      value: "50,000",
+      suffix: "명+",
+      label: "누적 참여·수혜자",
+      description: "프로그램 참여 및 서비스 이용자",
+      icon: Users,
+    },
+    {
+      value: "30",
+      suffix: "개+",
+      label: "협력기관",
+      description: "함께하는 기관 및 단체",
+      icon: Building,
+    },
+    {
+      value: String(activityYears),
+      suffix: "년+",
+      label: "활동 기간",
+      description: `${foundingYear}년 활동 시작`,
+      icon: Calendar,
+    },
+  ]
+
   return (
     <section className="py-16 lg:py-24 bg-background">
       <div className="mx-auto max-w-7xl px-4 lg:px-8">

@@ -7,9 +7,10 @@ import { OrganizationSection } from "@/components/sections/about/organization-se
 import { TimelineSection } from "@/components/sections/about/timeline-section"
 
 export const metadata = {
-  title: "소이랩 소개 | 협동조합 소이랩",
+  title: "소이랩 소개",
   description:
     "협동조합 소이랩은 대구 북구 소재 협동조합·사회적기업입니다. 협동, 혁신, 지속가능성을 핵심 가치로 사회문제를 함께 해결합니다.",
+  alternates: { canonical: "/about" },
 }
 
 export default function AboutPage() {

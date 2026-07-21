@@ -3,6 +3,7 @@ import type { Metadata } from 'next'
 export const metadata: Metadata = {
   title: '한일 리빙랩 포럼 키오스크 데모',
   description: '한일 리빙랩 포럼 준비자료 키오스크 데모',
+  robots: { index: false, follow: false },
 }
 
 export default function KioskDemoPage() {

@@ -2,8 +2,10 @@
 
 import Link from "next/link"
 import { useState } from "react"
+import { usePathname } from "next/navigation"
 import { Menu, X } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { cn } from "@/lib/utils"
 
 const navigation = [
   { name: "홈", href: "/" },
@@ -16,6 +18,10 @@ const navigation = [
 
 export function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const pathname = usePathname()
+
+  const isActive = (href: string) =>
+    href === "/" ? pathname === "/" : pathname.startsWith(href)
 
   return (
     <header className="sticky top-0 z-50 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80 border-b border-border">
@@ -33,8 +39,10 @@ export function Header() {
             type="button"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             className="-m-2.5 inline-flex items-center justify-center rounded-md p-2.5 text-foreground"
+            aria-expanded={mobileMenuOpen}
+            aria-controls="mobile-navigation"
+            aria-label={mobileMenuOpen ? "메뉴 닫기" : "메뉴 열기"}
           >
-            <span className="sr-only">메뉴 열기</span>
             {mobileMenuOpen ? (
               <X className="h-6 w-6" aria-hidden="true" />
             ) : (
@@ -48,7 +56,11 @@ export function Header() {
             <Link
               key={item.name}
               href={item.href}
-              className="text-sm font-medium text-foreground hover:text-primary transition-colors"
+              aria-current={isActive(item.href) ? "page" : undefined}
+              className={cn(
+                "text-sm font-medium transition-colors hover:text-primary",
+                isActive(item.href) ? "text-primary" : "text-foreground",
+              )}
             >
               {item.name}
             </Link>
@@ -64,13 +76,17 @@ export function Header() {
 
       {/* Mobile menu */}
       {mobileMenuOpen && (
-        <div className="lg:hidden">
+        <div id="mobile-navigation" className="lg:hidden">
           <div className="space-y-1 px-4 pb-4">
             {navigation.map((item) => (
               <Link
                 key={item.name}
                 href={item.href}
-                className="block rounded-lg px-3 py-2 text-base font-medium text-foreground hover:bg-secondary"
+                aria-current={isActive(item.href) ? "page" : undefined}
+                className={cn(
+                  "block rounded-lg px-3 py-2 text-base font-medium hover:bg-secondary",
+                  isActive(item.href) ? "bg-secondary text-primary" : "text-foreground",
+                )}
                 onClick={() => setMobileMenuOpen(false)}
               >
                 {item.name}

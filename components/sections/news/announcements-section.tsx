@@ -1,8 +1,10 @@
 "use client"
 
+import { useState } from "react"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { Calendar, ExternalLink } from "lucide-react"
+import { Button } from "@/components/ui/button"
+import { Calendar, ChevronDown, ExternalLink } from "lucide-react"
 import type { NotionAnnouncement } from "@/lib/notion"
 
 interface AnnouncementsSectionProps {
@@ -10,6 +12,8 @@ interface AnnouncementsSectionProps {
 }
 
 export function AnnouncementsSection({ announcements }: AnnouncementsSectionProps) {
+  const [visibleCount, setVisibleCount] = useState(12)
+
   if (announcements.length === 0) {
     return (
       <p className="py-16 text-center text-muted-foreground">
@@ -18,9 +22,12 @@ export function AnnouncementsSection({ announcements }: AnnouncementsSectionProp
     )
   }
 
+  const visibleAnnouncements = announcements.slice(0, visibleCount)
+
   return (
-    <div className="space-y-3">
-      {announcements.map((item) => {
+    <>
+      <div className="space-y-3">
+      {visibleAnnouncements.map((item) => {
         const inner = (
           <CardContent className="p-5">
             <div className="flex flex-col sm:flex-row sm:items-center gap-3">
@@ -30,7 +37,7 @@ export function AnnouncementsSection({ announcements }: AnnouncementsSectionProp
                 </Badge>
               )}
               <div className="flex-1 min-w-0">
-                <p className="font-medium text-card-foreground group-hover:text-primary transition-colors truncate">
+                <p className="line-clamp-2 font-medium text-card-foreground transition-colors group-hover:text-primary">
                   {item.title}
                 </p>
               </div>
@@ -56,6 +63,7 @@ export function AnnouncementsSection({ announcements }: AnnouncementsSectionProp
             target="_blank"
             rel="noopener noreferrer"
             className="block"
+            aria-label={`${item.title} 원문 보기 (새 창)`}
           >
             <Card className="group border border-border hover:border-primary/30 shadow-sm hover:shadow-md transition-all duration-300 bg-card cursor-pointer">
               {inner}
@@ -70,6 +78,20 @@ export function AnnouncementsSection({ announcements }: AnnouncementsSectionProp
           </Card>
         )
       })}
-    </div>
+      </div>
+
+      {visibleCount < announcements.length && (
+        <div className="mt-8 text-center">
+          <Button
+            type="button"
+            variant="outline"
+            onClick={() => setVisibleCount((count) => count + 12)}
+          >
+            소식 더 보기
+            <ChevronDown className="ml-2 h-4 w-4" aria-hidden="true" />
+          </Button>
+        </div>
+      )}
+    </>
   )
 }

@@ -7,8 +7,9 @@ import { ProjectList } from "@/components/sections/impact/project-list"
 import { PartnerLogos } from "@/components/sections/impact/partner-logos"
 
 export const metadata: Metadata = {
-  title: "실적·성과 | 협동조합 소이랩",
-  description: "소이랩이 지역사회와 함께 만들어온 변화의 기록입니다. 설립 이후 150건 이상의 프로젝트와 50,000명 이상의 수혜자.",
+  title: "실적·성과",
+  description: "소이랩이 지역사회와 함께 만들어온 변화의 기록입니다. 주요 수행사업과 협력기관, 누적 성과를 확인하세요.",
+  alternates: { canonical: "/impact" },
 }
 
 export default function ImpactPage() {
