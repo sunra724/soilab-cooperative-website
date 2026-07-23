@@ -42,7 +42,7 @@ export function CoreValuesSection() {
         </div>
 
         <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
-          {coreValues.map((value, index) => (
+          {coreValues.map((value) => (
             <Card
               key={value.title}
               className="border-none shadow-lg hover:shadow-xl transition-all hover:-translate-y-1 bg-card overflow-hidden"

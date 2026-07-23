@@ -7,9 +7,10 @@ import { ServiceDetailCards } from "@/components/sections/services/service-detai
 import { ServicesCTA } from "@/components/sections/services/services-cta"
 
 export const metadata: Metadata = {
-  title: "사업소개 | 협동조합 소이랩",
+  title: "사업소개",
   description:
     "소이랩의 4대 핵심 사업: ESG 경영컨설팅, 리빙랩 운영, 청년정책 프로그램, 인지건강디자인. 대구 기반 사회혁신 협동조합.",
+  alternates: { canonical: "/services" },
 }
 
 export default function ServicesPage() {

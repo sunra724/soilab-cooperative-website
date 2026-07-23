@@ -1,12 +1,14 @@
+import { Building2 } from "lucide-react"
+
 const partners = [
-  { name: "대구광역시", abbr: "대구" },
-  { name: "대구 남구청", abbr: "남구" },
-  { name: "한국사회적기업진흥원", abbr: "사진원" },
-  { name: "대구테크노파크", abbr: "TP" },
-  { name: "대구사회혁신센터", abbr: "혁신" },
-  { name: "국토교통부", abbr: "국토부" },
-  { name: "대구경북중소기업청", abbr: "중기청" },
-  { name: "대구광역시사회서비스원", abbr: "사서원" },
+  "대구광역시",
+  "대구 남구청",
+  "한국사회적기업진흥원",
+  "대구테크노파크",
+  "대구사회혁신센터",
+  "국토교통부",
+  "대구경북중소기업청",
+  "대구광역시사회서비스원",
 ]
 
 export function PartnerLogos() {
@@ -22,20 +24,17 @@ export function PartnerLogos() {
           </p>
         </div>
 
-        <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-4 lg:gap-6">
+        <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
           {partners.map((partner) => (
             <div
-              key={partner.name}
-              className="flex flex-col items-center justify-center p-6 bg-card rounded-xl border border-border hover:border-primary/30 hover:shadow-sm transition-all group"
+              key={partner}
+              className="flex min-h-28 flex-col items-center justify-center rounded-xl border border-border bg-card p-5 text-center transition-all hover:border-primary/30 hover:shadow-sm"
             >
-              {/* Placeholder logo */}
-              <div className="h-16 w-16 flex items-center justify-center rounded-full bg-secondary group-hover:bg-primary/10 transition-colors mb-3">
-                <span className="font-serif text-lg font-bold text-primary">
-                  {partner.abbr}
-                </span>
+              <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 text-primary">
+                <Building2 className="h-5 w-5" aria-hidden="true" />
               </div>
-              <span className="text-xs text-center text-muted-foreground leading-tight">
-                {partner.name}
+              <span className="text-sm font-medium leading-snug text-foreground">
+                {partner}
               </span>
             </div>
           ))}

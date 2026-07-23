@@ -28,7 +28,7 @@ export function ServicesOverview() {
     <section className="py-12 bg-secondary/30 border-y border-border">
       <div className="mx-auto max-w-7xl px-4 lg:px-8">
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
-          {services.map((service, index) => (
+          {services.map((service) => (
             <div
               key={service.title}
               className="flex items-center gap-4 group"

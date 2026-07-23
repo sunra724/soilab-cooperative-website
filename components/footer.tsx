@@ -59,7 +59,14 @@ export function Footer() {
               </li>
               <li className="flex items-start gap-2 text-sm text-primary-foreground/80">
                 <MapPin className="h-4 w-4 mt-0.5" />
-                <span>대구광역시 북구 대현로 3, 2층</span>
+                <a
+                  href="https://map.naver.com/p/search/%EB%8C%80%EA%B5%AC%EA%B4%91%EC%97%AD%EC%8B%9C%20%EB%B6%81%EA%B5%AC%20%EB%8C%80%ED%98%84%EB%A1%9C%203"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hover:text-primary-foreground transition-colors"
+                >
+                  대구광역시 북구 대현로 3, 2층
+                </a>
               </li>
             </ul>
           </div>

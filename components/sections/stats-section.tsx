@@ -1,27 +1,14 @@
-const stats = [
-  {
-    value: "8+",
-    label: "활동 연수",
-    suffix: "년",
-  },
-  {
-    value: "150+",
-    label: "완료 프로젝트",
-    suffix: "건",
-  },
-  {
-    value: "50,000+",
-    label: "수혜자 수",
-    suffix: "명",
-  },
-  {
-    value: "30+",
-    label: "협력 기관",
-    suffix: "곳",
-  },
-]
+const foundingYear = 2012
 
 export function StatsSection() {
+  const activityYears = new Date().getFullYear() - foundingYear
+  const stats = [
+    { value: `${activityYears}+`, label: "활동 기간" },
+    { value: "150+", label: "완료 프로젝트" },
+    { value: "50,000+", label: "누적 참여·수혜자" },
+    { value: "30+", label: "협력 기관" },
+  ]
+
   return (
     <section className="py-20 lg:py-28 bg-primary">
       <div className="mx-auto max-w-7xl px-4 lg:px-8">

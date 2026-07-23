@@ -47,7 +47,7 @@ const projects: Project[] = [
     id: "3",
     title: "청년 N.E.S.T. 2026 프로그램",
     client: "대구 남구청년센터",
-    year: 2024,
+    year: 2026,
     category: "youth",
     description: "청년 380명 대상 네트워킹, 교육, 지원, 훈련 통합 프로그램 운영",
   },
