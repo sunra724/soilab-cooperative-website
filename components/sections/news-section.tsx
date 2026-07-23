@@ -1,8 +1,9 @@
 import Link from "next/link"
-import { ArrowRight, ArrowUpRight, Calendar } from "lucide-react"
+import { ArrowRight, Calendar } from "lucide-react"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { getAnnouncements, getEvents } from "@/lib/notion"
+import { getNewsDetailHref } from "@/lib/news"
 
 interface HomeNewsItem {
   id: string
@@ -11,7 +12,7 @@ interface HomeNewsItem {
   category: string
   excerpt: string
   href: string
-  external: boolean
+  featured: boolean
 }
 
 export async function NewsSection() {
@@ -20,28 +21,31 @@ export async function NewsSection() {
     getAnnouncements(),
   ])
 
-  const items: HomeNewsItem[] = [
+  const allItems: HomeNewsItem[] = [
     ...events.map((event) => ({
       id: `event-${event.id}`,
       title: event.title,
       date: event.date,
       category: event.tag || "행사",
       excerpt: event.description || "소이랩의 행사·프로그램 소식을 확인하세요.",
-      href: event.url || "/news",
-      external: Boolean(event.url),
+      href: getNewsDetailHref(event.id),
+      featured: event.featured,
     })),
     ...announcements.map((item) => ({
       id: `announcement-${item.id}`,
       title: item.title,
       date: item.date,
       category: item.source || "소식",
-      excerpt: item.source
+      excerpt: item.description || (item.source
         ? `${item.source}에 소개된 소이랩의 활동 소식입니다.`
-        : "소이랩의 새로운 활동 소식을 확인하세요.",
-      href: item.url || "/news",
-      external: Boolean(item.url),
+        : "소이랩의 새로운 활동 소식을 확인하세요."),
+      href: getNewsDetailHref(item.id),
+      featured: item.featured,
     })),
   ]
+
+  const featuredItems = allItems.filter((item) => item.featured)
+  const items = (featuredItems.length > 0 ? featuredItems : allItems)
     .sort((a, b) => b.date.localeCompare(a.date))
     .slice(0, 3)
 
@@ -90,28 +94,13 @@ export async function NewsSection() {
                     </p>
                     <span className="mt-auto inline-flex items-center pt-5 text-sm font-medium text-primary">
                       자세히 보기
-                      {item.external ? (
-                        <ArrowUpRight className="ml-1 h-3.5 w-3.5" aria-hidden="true" />
-                      ) : (
-                        <ArrowRight className="ml-1 h-3.5 w-3.5" aria-hidden="true" />
-                      )}
+                      <ArrowRight className="ml-1 h-3.5 w-3.5" aria-hidden="true" />
                     </span>
                   </CardContent>
                 </Card>
               )
 
-              return item.external ? (
-                <a
-                  key={item.id}
-                  href={item.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="group block rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-                  aria-label={`${item.title} 자세히 보기 (새 창)`}
-                >
-                  {card}
-                </a>
-              ) : (
+              return (
                 <Link
                   key={item.id}
                   href={item.href}

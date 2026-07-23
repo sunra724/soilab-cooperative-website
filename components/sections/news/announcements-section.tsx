@@ -1,11 +1,13 @@
 "use client"
 
+import Link from "next/link"
 import { useState } from "react"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { Calendar, ChevronDown, ExternalLink } from "lucide-react"
+import { ArrowRight, Calendar, ChevronDown } from "lucide-react"
 import type { NotionAnnouncement } from "@/lib/notion"
+import { getNewsDetailHref } from "@/lib/news"
 
 interface AnnouncementsSectionProps {
   announcements: NotionAnnouncement[]
@@ -48,34 +50,23 @@ export function AnnouncementsSection({ announcements }: AnnouncementsSectionProp
                     <span>{item.date}</span>
                   </div>
                 )}
-                {item.url && (
-                  <ExternalLink className="h-3 w-3 text-primary" />
-                )}
+                <ArrowRight className="h-3 w-3 text-primary" aria-hidden="true" />
               </div>
             </div>
           </CardContent>
         )
 
-        return item.url ? (
-          <a
+        return (
+          <Link
             key={item.id}
-            href={item.url}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="block"
-            aria-label={`${item.title} 원문 보기 (새 창)`}
+            href={getNewsDetailHref(item.id)}
+            className="group block rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+            aria-label={`${item.title} 자세히 보기`}
           >
-            <Card className="group border border-border hover:border-primary/30 shadow-sm hover:shadow-md transition-all duration-300 bg-card cursor-pointer">
+            <Card className="border border-border bg-card shadow-sm transition-all duration-300 hover:border-primary/30 hover:shadow-md">
               {inner}
             </Card>
-          </a>
-        ) : (
-          <Card
-            key={item.id}
-            className="border border-border shadow-sm bg-card"
-          >
-            {inner}
-          </Card>
+          </Link>
         )
       })}
       </div>
