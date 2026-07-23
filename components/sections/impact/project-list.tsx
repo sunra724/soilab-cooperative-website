@@ -4,9 +4,9 @@ import { useState } from "react"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
-import { Leaf, Building2, Users, Brain, FolderOpen } from "lucide-react"
+import { Leaf, Building2, Users, Brain, FolderOpen, ExternalLink } from "lucide-react"
 
-type Category = "all" | "esg" | "livinglab" | "youth" | "cognitive" | "other"
+type Category = "all" | "esg" | "livinglab" | "youth" | "cognitive"
 
 interface Project {
   id: string
@@ -23,105 +23,88 @@ const categories: { id: Category; label: string; icon: typeof Leaf }[] = [
   { id: "livinglab", label: "리빙랩", icon: Building2 },
   { id: "youth", label: "청년", icon: Users },
   { id: "cognitive", label: "인지건강", icon: Brain },
-  { id: "other", label: "기타", icon: FolderOpen },
 ]
 
 const projects: Project[] = [
   {
     id: "1",
-    title: "중소기업 ESG 경영진단 컨설팅",
-    client: "대구광역시",
-    year: 2024,
-    category: "esg",
-    description: "K-ESG 지표 기반 중소기업 50개사 대상 ESG 자가진단 및 맞춤형 컨설팅 제공",
+    title: "아동·청소년 문해력 증진 실증 리빙랩 ‘도담도담’",
+    client: "경북대학교 사회과학대학",
+    year: 2026,
+    category: "livinglab",
+    description: "아동·청소년 문해력 증진 프로그램을 현장에서 실증하는 참여형 리빙랩 운영",
   },
   {
     id: "2",
-    title: "남구 리빙랩 도시재생 프로젝트",
-    client: "대구 남구청",
-    year: 2024,
+    title: "커뮤니티 리빙랩 프로젝트",
+    client: "경북대학교 산학협력단",
+    year: 2026,
     category: "livinglab",
-    description: "시민 참여형 골목길 환경개선 및 커뮤니티 공간 조성 프로젝트",
+    description: "지역문제 발굴부터 실증까지 이어지는 커뮤니티 리빙랩 프로젝트 운영",
   },
   {
     id: "3",
-    title: "청년 N.E.S.T. 2026 프로그램",
-    client: "대구 남구청년센터",
-    year: 2026,
-    category: "youth",
-    description: "청년 380명 대상 네트워킹, 교육, 지원, 훈련 통합 프로그램 운영",
+    title: "스마트시티 특화단지 도시문제발굴단 리빙랩",
+    client: "대구테크노파크",
+    year: 2025,
+    category: "livinglab",
+    description: "스마트시티 특화단지의 도시문제를 시민과 함께 발굴하는 리빙랩 운영",
   },
   {
     id: "4",
-    title: "인지건강 증진 프로그램 개발",
-    client: "대구광역시 남구",
-    year: 2024,
-    category: "cognitive",
-    description: "지역 복지관 12개소 연계 어르신 인지건강 증진 프로그램 개발 및 운영",
+    title: "동성로 소셜 리빙랩 ‘YOUNG구소’",
+    client: "경북대학교 산학협력단",
+    year: 2025,
+    category: "youth",
+    description: "동성로를 무대로 지역문제를 발굴하고 해결안을 실험하는 소셜 리빙랩",
   },
   {
     id: "5",
-    title: "사회적경제 ESG 역량강화 교육",
-    client: "한국사회적기업진흥원",
-    year: 2023,
-    category: "esg",
-    description: "사회적경제 조직 대상 ESG 경영 이해 및 실천 방안 교육 프로그램",
+    title: "경도인지장애 ‘알로하하하’ 프로그램 효과성 연구",
+    client: "한국에자이",
+    year: 2024,
+    category: "cognitive",
+    description: "경도인지장애 대상 프로그램의 효과성을 연구하고 현장 보급·확산을 지원",
   },
   {
     id: "6",
-    title: "대구형 리빙랩 모델 개발",
-    client: "대구테크노파크",
-    year: 2023,
-    category: "livinglab",
-    description: "대구 지역 특성에 맞는 리빙랩 운영 모델 및 가이드라인 개발",
+    title: "서대문구 돌봄·재활기기 실증 리빙랩",
+    client: "서대문희망누리 사회적협동조합",
+    year: 2024,
+    category: "cognitive",
+    description: "돌봄 시스템과 손떨림 방지 재활기기의 현장 적용 가능성을 검증하는 실증 리빙랩",
   },
   {
     id: "7",
-    title: "청년정책 모니터링단 운영",
-    client: "대구광역시",
+    title: "KB ESG 임팩트 뇌전증 인식개선 툴킷",
+    client: "별을 만드는 사람들",
     year: 2023,
-    category: "youth",
-    description: "청년 정책 실효성 점검 및 개선 제안을 위한 청년 모니터링단 운영",
+    category: "esg",
+    description: "뇌전증 인식개선을 위한 교육 커리큘럼과 참여형 툴킷 개발",
   },
   {
     id: "8",
-    title: "치매안심마을 조성 컨설팅",
-    client: "대구 남구 치매안심센터",
+    title: "청년 인재유입·정착지원 프로그램",
+    client: "대구창조경제혁신센터",
     year: 2023,
-    category: "cognitive",
-    description: "지역사회 기반 치매친화환경 조성을 위한 서비스 디자인 컨설팅",
+    category: "youth",
+    description: "지역 유입 청년의 정착을 지원하는 프로그램과 워크숍 운영",
   },
   {
     id: "9",
-    title: "지역사회 혁신 포럼 운영",
-    client: "대구사회혁신센터",
+    title: "SW융합클러스터 도시서비스 사용성평가 리빙랩",
+    client: "대구테크노파크",
     year: 2022,
-    category: "other",
-    description: "지역 혁신 주체 네트워킹 및 협력 방안 모색을 위한 연간 포럼 운영",
+    category: "livinglab",
+    description: "도시서비스 실증 과정에서 사용자 경험과 활용성을 점검하는 사용성평가 리빙랩",
   },
   {
     id: "10",
-    title: "남구 청년공간 기획 및 운영",
-    client: "대구 남구청",
+    title: "대구공공시설관리공단 주민참여 리빙랩",
+    client: "대구공공시설관리공단",
     year: 2022,
-    category: "youth",
-    description: "청년 커뮤니티 활성화를 위한 청년공간 기획, 설계 및 프로그램 운영",
-  },
-  {
-    id: "11",
-    title: "ESG 자가진단 도구 개발",
-    client: "대구경북중소기업청",
-    year: 2022,
-    category: "esg",
-    description: "중소기업 맞춤형 ESG 자가진단 웹 도구 기획 및 개발",
-  },
-  {
-    id: "12",
-    title: "스마트 시티 리빙랩 실증",
-    client: "국토교통부",
-    year: 2021,
     category: "livinglab",
-    description: "IoT 기반 시민 생활환경 개선 솔루션 리빙랩 실증 프로젝트",
+    description: "주민이 직접 지역문제를 발굴하고 해결안을 실험하는 참여형 리빙랩",
   },
 ]
 
@@ -131,7 +114,6 @@ const categoryColors: Record<Category, string> = {
   livinglab: "bg-blue-500",
   youth: "bg-amber-500",
   cognitive: "bg-rose-500",
-  other: "bg-gray-500",
 }
 
 export function ProjectList() {
@@ -149,7 +131,7 @@ export function ProjectList() {
 
   const getCategoryLabel = (category: Category) => {
     const cat = categories.find((c) => c.id === category)
-    return cat?.label || "기타"
+    return cat?.label || "전체"
   }
 
   return (
@@ -157,10 +139,10 @@ export function ProjectList() {
       <div className="mx-auto max-w-7xl px-4 lg:px-8">
         <div className="text-center mb-12">
           <h2 className="font-serif text-3xl font-bold text-foreground sm:text-4xl">
-            주요 <span className="text-primary">수행사업</span>
+            대표 <span className="text-primary">수행사업</span>
           </h2>
           <p className="mt-4 text-muted-foreground max-w-2xl mx-auto">
-            소이랩이 수행한 주요 프로젝트를 카테고리별로 확인하세요.
+            2022년부터 2026년까지 수행한 사업 중 대표 프로젝트를 간단히 소개합니다.
           </p>
         </div>
 
@@ -240,6 +222,22 @@ export function ProjectList() {
             해당 카테고리의 프로젝트가 없습니다.
           </div>
         )}
+
+        <div className="mt-12 rounded-2xl border border-primary/15 bg-background p-6 text-center shadow-sm">
+          <p className="text-sm leading-relaxed text-muted-foreground">
+            더 많은 사례와 리빙랩 운영 도구는 소이랩 AI 리빙랩 포털에서 확인할 수 있습니다.
+          </p>
+          <Button className="mt-4" asChild>
+            <a
+              href="https://lab.soilabcoop.kr/cases"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              상세 사례 보기
+              <ExternalLink className="ml-2 h-4 w-4" />
+            </a>
+          </Button>
+        </div>
       </div>
     </section>
   )

@@ -1,14 +1,14 @@
 import { Building2 } from "lucide-react"
 
 const partners = [
-  "대구광역시",
-  "대구 남구청",
-  "한국사회적기업진흥원",
   "대구테크노파크",
-  "대구사회혁신센터",
-  "국토교통부",
-  "대구경북중소기업청",
-  "대구광역시사회서비스원",
+  "경북대학교 산학협력단",
+  "경북대학교 지역사회공헌센터",
+  "대구창조경제혁신센터",
+  "대구공공시설관리공단",
+  "한국에자이",
+  "과학기술정책연구원",
+  "한국산업단지공단",
 ]
 
 export function PartnerLogos() {
@@ -20,7 +20,7 @@ export function PartnerLogos() {
             함께하는 <span className="text-primary">파트너</span>
           </h2>
           <p className="mt-4 text-muted-foreground max-w-2xl mx-auto">
-            소이랩과 협력하여 지역사회 혁신을 만들어가는 기관들입니다.
+            최근 수행사업을 함께한 대표 협력기관입니다.
           </p>
         </div>
 
@@ -42,7 +42,7 @@ export function PartnerLogos() {
 
         <div className="mt-12 text-center">
           <p className="text-sm text-muted-foreground">
-            그 외 다수의 공공기관, 기업, 비영리단체와 협력하고 있습니다.
+            공공기관, 대학, 기업, 비영리조직과 함께 현장의 변화를 만들고 있습니다.
           </p>
         </div>
       </div>

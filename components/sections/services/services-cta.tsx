@@ -1,6 +1,5 @@
-import Link from "next/link"
 import { Button } from "@/components/ui/button"
-import { ArrowRight, Mail } from "lucide-react"
+import { ExternalLink, Mail } from "lucide-react"
 
 export function ServicesCTA() {
   return (
@@ -13,7 +12,8 @@ export function ServicesCTA() {
           <p className="mt-6 text-lg text-primary-foreground/80 leading-relaxed">
             ESG 컨설팅, 리빙랩, 청년정책, 인지건강디자인 등 
             소이랩의 전문 역량을 통해 귀사 또는 귀 기관의 
-            사회적 가치 창출을 지원합니다.
+            사회적 가치 창출을 지원합니다. 상세 사례와 운영 도구는
+            영업용 포털에서 확인하세요.
           </p>
           <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
             <Button
@@ -33,10 +33,14 @@ export function ServicesCTA() {
               className="w-full sm:w-auto border-primary-foreground/30 text-primary-foreground hover:bg-primary-foreground/10 hover:text-primary-foreground"
               asChild
             >
-              <Link href="/about">
-                소이랩 소개
-                <ArrowRight className="ml-2 h-4 w-4" />
-              </Link>
+              <a
+                href="https://lab.soilabcoop.kr/"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                상세 사례·운영 도구
+                <ExternalLink className="ml-2 h-4 w-4" />
+              </a>
             </Button>
           </div>
         </div>

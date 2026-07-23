@@ -1,7 +1,7 @@
 import Link from "next/link"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { Leaf, FlaskConical, GraduationCap, Brain, ArrowRight } from "lucide-react"
+import { Leaf, FlaskConical, GraduationCap, Brain, ArrowRight, ExternalLink } from "lucide-react"
 
 const services = [
   {
@@ -65,12 +65,22 @@ export function ServicesSection() {
           ))}
         </div>
 
-        <div className="mt-12 text-center">
+        <div className="mt-12 flex flex-col items-center justify-center gap-3 sm:flex-row">
           <Button variant="outline" size="lg" asChild>
             <Link href="/services">
               사업 자세히 보기
               <ArrowRight className="ml-2 h-4 w-4" />
             </Link>
+          </Button>
+          <Button size="lg" asChild>
+            <a
+              href="https://lab.soilabcoop.kr/"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              영업용 포털 보기
+              <ExternalLink className="ml-2 h-4 w-4" />
+            </a>
           </Button>
         </div>
       </div>
