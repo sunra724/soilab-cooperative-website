@@ -11,6 +11,8 @@ const notion = new Client({
   notionVersion: "2026-03-11",
 })
 
+const DEFAULT_PRESS_SOURCE_PAGE_ID = "817e1023-820b-4da4-915e-25eccc9d83fa"
+
 type PageProperty = PageObjectResponse["properties"][string]
 
 function richTextToString(richText: RichTextItemResponse[]): string {
@@ -107,6 +109,148 @@ function getBlockAssetUrl(block: BlockObjectResponse): string | null {
 
   return null
 }
+
+function getBlockValue(block: BlockObjectResponse): {
+  url?: unknown
+  external?: { url?: unknown }
+  rich_text?: RichTextItemResponse[]
+  caption?: RichTextItemResponse[]
+} {
+  const value = (block as unknown as Record<string, unknown>)[block.type]
+  return value && typeof value === "object"
+    ? value as {
+        url?: unknown
+        external?: { url?: unknown }
+        rich_text?: RichTextItemResponse[]
+        caption?: RichTextItemResponse[]
+      }
+    : {}
+}
+
+function getBlockText(block: BlockObjectResponse): string {
+  const value = getBlockValue(block)
+  return richTextToString(value.rich_text ?? value.caption ?? [])
+}
+
+function findHttpUrl(value: string | null | undefined): string | null {
+  const match = value?.match(/https?:\/\/[^\s<>"']+/i)
+  return match?.[0].replace(/[),.;!?]+$/, "") ?? null
+}
+
+function getBlockExternalUrl(block: BlockObjectResponse): string | null {
+  const value = getBlockValue(block)
+  const directUrl =
+    typeof value.url === "string"
+      ? findHttpUrl(value.url)
+      : typeof value.external?.url === "string"
+        ? findHttpUrl(value.external.url)
+        : null
+
+  if (directUrl) return directUrl
+
+  const richText = value.rich_text ?? value.caption ?? []
+  for (const item of richText) {
+    const url = findHttpUrl(item.href) ?? findHttpUrl(item.plain_text)
+    if (url) return url
+  }
+
+  return null
+}
+
+async function listBlockChildren(blockId: string): Promise<BlockObjectResponse[]> {
+  const blocks: BlockObjectResponse[] = []
+  let startCursor: string | undefined
+
+  do {
+    const response = await notion.blocks.children.list({
+      block_id: blockId,
+      page_size: 100,
+      start_cursor: startCursor,
+    })
+
+    blocks.push(
+      ...response.results.filter(
+        (block): block is BlockObjectResponse =>
+          block.object === "block" && "type" in block,
+      ),
+    )
+    startCursor = response.has_more
+      ? response.next_cursor ?? undefined
+      : undefined
+  } while (startCursor)
+
+  return blocks
+}
+
+async function findUrlInBlock(block: BlockObjectResponse): Promise<string | null> {
+  const directUrl = getBlockExternalUrl(block)
+  if (directUrl) return directUrl
+  if (!block.has_children) return null
+
+  const children = await listBlockChildren(block.id)
+  for (const child of children) {
+    const url = await findUrlInBlock(child)
+    if (url) return url
+  }
+
+  return null
+}
+
+function normalizePressTitle(value: string): string {
+  return value
+    .normalize("NFKC")
+    .toLowerCase()
+    .replace(/[^0-9a-z가-힣]/g, "")
+}
+
+function looksLikePressTitle(value: string): boolean {
+  return /^\s*\d{2,4}[-./]\d{1,2}(?:[-./]\d{1,2})?\s+/.test(value)
+}
+
+const getPressSourceBlocks = cache(async (pageId: string) => (
+  listBlockChildren(pageId)
+))
+
+const getPressSourceUrl = cache(
+  async (title: string): Promise<string | null> => {
+    const pageId =
+      process.env.NOTION_PRESS_SOURCE_PAGE_ID ?? DEFAULT_PRESS_SOURCE_PAGE_ID
+
+    try {
+      const blocks = await getPressSourceBlocks(pageId)
+      const normalizedTitle = normalizePressTitle(title)
+      const titleIndex = blocks.findIndex((block) => {
+        const blockTitle = normalizePressTitle(getBlockText(block))
+        return (
+          blockTitle.length > 0 &&
+          normalizedTitle.length > 0 &&
+          blockTitle.includes(normalizedTitle)
+        )
+      })
+
+      if (titleIndex < 0) return null
+
+      for (let index = titleIndex; index < blocks.length; index += 1) {
+        const block = blocks[index]
+        const blockText = getBlockText(block)
+
+        if (
+          index > titleIndex &&
+          (block.type.startsWith("heading_") || looksLikePressTitle(blockText))
+        ) {
+          break
+        }
+
+        const url = await findUrlInBlock(block)
+        if (url) return url
+      }
+    } catch (error) {
+      console.error("[notion] 언론보도 원문 링크 조회 실패:", error)
+    }
+
+    return null
+  },
+)
 
 async function resolveNotionFileReferences(markdown: string): Promise<string> {
   const references = [
@@ -470,7 +614,9 @@ export const getNewsDetail = cache(
         location: "",
         description: getRichText(page, ["요약", "Excerpt", "Description"]),
         result: "",
-        externalUrl: getUrl(page, ["URL", "원문", "Link"]),
+        externalUrl:
+          getUrl(page, ["URL", "원문", "Link"]) ??
+          await getPressSourceUrl(getTitle(page, ["제목", "Name"])),
         coverImage:
           getFileUrl(page, ["대표이미지", "Cover", "Thumbnail"]) ??
           getPageCoverUrl(page),
