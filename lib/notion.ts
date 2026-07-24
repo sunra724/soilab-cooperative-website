@@ -207,48 +207,99 @@ function looksLikePressTitle(value: string): boolean {
   return /^\s*\d{2,4}[-./]\d{1,2}(?:[-./]\d{1,2})?\s+/.test(value)
 }
 
+interface PressSourceArticle {
+  id: string
+  title: string
+  date: string
+  source: string
+  year: string
+  url: string | null
+  lastEditedTime: string
+}
+
+function parsePressSourceTitle(value: string): Omit<
+  PressSourceArticle,
+  "id" | "url" | "lastEditedTime"
+> | null {
+  const match = value.match(
+    /^\s*(\d{2}|\d{4})[-./](\d{1,2})[-./](\d{1,2})\s+(?:\[([^\]]+)\]\s*)?(.+?)\s*$/,
+  )
+
+  if (!match) return null
+
+  const [, rawYear, rawMonth, rawDay, source = "", title] = match
+  const year =
+    rawYear.length === 2
+      ? String(2000 + Number(rawYear))
+      : rawYear
+  const month = rawMonth.padStart(2, "0")
+  const day = rawDay.padStart(2, "0")
+
+  return {
+    title: title.trim(),
+    date: `${year}.${month}.${day}`,
+    source: source.trim(),
+    year,
+  }
+}
+
 const getPressSourceBlocks = cache(async (pageId: string) => (
   listBlockChildren(pageId)
 ))
 
-const getPressSourceUrl = cache(
-  async (title: string): Promise<string | null> => {
+const getPressSourceArticles = cache(
+  async (): Promise<PressSourceArticle[]> => {
     const pageId =
       process.env.NOTION_PRESS_SOURCE_PAGE_ID ?? DEFAULT_PRESS_SOURCE_PAGE_ID
 
     try {
       const blocks = await getPressSourceBlocks(pageId)
-      const normalizedTitle = normalizePressTitle(title)
-      const titleIndex = blocks.findIndex((block) => {
-        const blockTitle = normalizePressTitle(getBlockText(block))
-        return (
-          blockTitle.length > 0 &&
-          normalizedTitle.length > 0 &&
-          blockTitle.includes(normalizedTitle)
-        )
-      })
+      const articles: PressSourceArticle[] = []
 
-      if (titleIndex < 0) return null
+      for (let titleIndex = 0; titleIndex < blocks.length; titleIndex += 1) {
+        const titleBlock = blocks[titleIndex]
+        const parsedTitle = parsePressSourceTitle(getBlockText(titleBlock))
+        if (!parsedTitle) continue
 
-      for (let index = titleIndex; index < blocks.length; index += 1) {
-        const block = blocks[index]
-        const blockText = getBlockText(block)
+        let url: string | null = null
+        for (let index = titleIndex; index < blocks.length; index += 1) {
+          const block = blocks[index]
+          const blockText = getBlockText(block)
 
-        if (
-          index > titleIndex &&
-          (block.type.startsWith("heading_") || looksLikePressTitle(blockText))
-        ) {
-          break
+          if (
+            index > titleIndex &&
+            (block.type.startsWith("heading_") || looksLikePressTitle(blockText))
+          ) {
+            break
+          }
+
+          url = await findUrlInBlock(block)
+          if (url) break
         }
 
-        const url = await findUrlInBlock(block)
-        if (url) return url
+        articles.push({
+          id: titleBlock.id,
+          ...parsedTitle,
+          url,
+          lastEditedTime: titleBlock.last_edited_time,
+        })
       }
-    } catch (error) {
-      console.error("[notion] 언론보도 원문 링크 조회 실패:", error)
-    }
 
-    return null
+      return articles
+    } catch (error) {
+      console.error("[notion] 언론보도 원본 페이지 조회 실패:", error)
+      return []
+    }
+  },
+)
+
+const getPressSourceUrl = cache(
+  async (title: string): Promise<string | null> => {
+    const normalizedTitle = normalizePressTitle(title)
+    const article = (await getPressSourceArticles()).find(
+      (item) => normalizePressTitle(item.title) === normalizedTitle,
+    )
+    return article?.url ?? null
   },
 )
 
@@ -474,15 +525,29 @@ export async function getEvents(): Promise<NotionEvent[]> {
 export async function getAnnouncements(): Promise<NotionAnnouncement[]> {
   const dbId = process.env.NOTION_PRESS_DB_ID
   if (!dbId) {
-    console.warn("[notion] NOTION_PRESS_DB_ID가 설정되지 않아 빈 목록을 반환합니다.")
-    return []
+    console.warn("[notion] NOTION_PRESS_DB_ID가 설정되지 않아 원본 페이지 목록만 반환합니다.")
+    return (await getPressSourceArticles()).map((article) => ({
+      ...article,
+      description: "",
+      coverImage: null,
+      featured: false,
+    }))
   }
 
   try {
-    const dataSourceId = await getPrimaryDataSourceId(dbId)
+    const [dataSourceId, sourceArticles] = await Promise.all([
+      getPrimaryDataSourceId(dbId),
+      getPressSourceArticles(),
+    ])
     const pages = await queryPublishedPages(dataSourceId, "날짜")
+    const sourceByTitle = new Map(
+      sourceArticles.map((article) => [
+        normalizePressTitle(article.title),
+        article,
+      ]),
+    )
 
-    return pages
+    const databaseItems = pages
       .map((page) => ({
           id: page.id,
           title: getTitle(page, ["제목", "Name"]),
@@ -498,9 +563,45 @@ export async function getAnnouncements(): Promise<NotionAnnouncement[]> {
           lastEditedTime: page.last_edited_time,
         }))
       .filter((item) => item.title)
+      .map((item) => {
+        const sourceArticle = sourceByTitle.get(
+          normalizePressTitle(item.title),
+        )
+
+        return {
+          ...item,
+          date: item.date || sourceArticle?.date || "",
+          source: item.source || sourceArticle?.source || "",
+          year: item.year || sourceArticle?.year || "",
+          url: item.url ?? sourceArticle?.url ?? null,
+        }
+      })
+
+    const databaseTitles = new Set(
+      databaseItems.map((item) => normalizePressTitle(item.title)),
+    )
+    const sourceOnlyItems: NotionAnnouncement[] = sourceArticles
+      .filter(
+        (article) =>
+          !databaseTitles.has(normalizePressTitle(article.title)),
+      )
+      .map((article) => ({
+        ...article,
+        description: "",
+        coverImage: null,
+        featured: false,
+      }))
+
+    return [...databaseItems, ...sourceOnlyItems]
+      .sort((left, right) => right.date.localeCompare(left.date))
   } catch (err) {
     console.error("[notion] getAnnouncements 실패:", err)
-    return []
+    return (await getPressSourceArticles()).map((article) => ({
+      ...article,
+      description: "",
+      coverImage: null,
+      featured: false,
+    }))
   }
 }
 
@@ -534,7 +635,30 @@ export const getNewsDetail = cache(
     const eventsDatabaseId = process.env.NOTION_EVENTS_DB_ID
     const pressDatabaseId = process.env.NOTION_PRESS_DB_ID
 
-    if (!pageId || !eventsDatabaseId || !pressDatabaseId) return null
+    if (!pageId) return null
+
+    const sourceArticle = (await getPressSourceArticles()).find(
+      (article) => sameId(article.id, pageId),
+    )
+    if (sourceArticle) {
+      return {
+        id: sourceArticle.id,
+        kind: "announcement",
+        title: sourceArticle.title,
+        date: sourceArticle.date,
+        category: sourceArticle.source,
+        status: "",
+        location: "",
+        description: "",
+        result: "",
+        externalUrl: sourceArticle.url,
+        coverImage: null,
+        markdown: "",
+        lastEditedTime: sourceArticle.lastEditedTime,
+      }
+    }
+
+    if (!eventsDatabaseId || !pressDatabaseId) return null
 
     try {
       const [pageResponse, eventsDataSourceId, pressDataSourceId] =
