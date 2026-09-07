@@ -4,6 +4,9 @@ import { getNewsDetailHref } from "@/lib/news"
 
 const siteUrl = "https://www.soilabcoop.kr"
 
+// Refresh Notion entries on the same interval as the news listing.
+export const revalidate = 60
+
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const routes = ["", "/about", "/services", "/impact", "/news", "/contact"]
   const [events, announcements] = await Promise.all([
@@ -13,7 +16,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   const staticRoutes: MetadataRoute.Sitemap = routes.map((route) => ({
     url: `${siteUrl}${route}`,
-    lastModified: new Date(),
     changeFrequency: route === "/news" ? "weekly" : "monthly",
     priority: route === "" ? 1 : 0.8,
   }))
