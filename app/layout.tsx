@@ -20,6 +20,11 @@ const notoSerifKR = Noto_Serif_KR({
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
+  verification: {
+    other: {
+      'naver-site-verification': 'eb92e86c4286c316303ae2e46da559ff3c6a419f',
+    },
+  },
   title: {
     default: '협동조합 소이랩 | 사회혁신을 함께 만듭니다',
     template: '%s | 협동조합 소이랩',
