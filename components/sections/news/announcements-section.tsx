@@ -60,6 +60,7 @@ export function AnnouncementsSection({ announcements }: AnnouncementsSectionProp
           <Link
             key={item.id}
             href={getNewsDetailHref(item.id)}
+            prefetch={false}
             className="group block rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
             aria-label={`${item.title} 자세히 보기`}
           >

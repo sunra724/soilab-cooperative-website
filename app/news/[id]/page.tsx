@@ -23,6 +23,11 @@ interface NewsDetailPageProps {
 
 export const revalidate = 60
 
+// Opt dynamic IDs into ISR; revalidate alone does not cache unknown paths.
+export async function generateStaticParams() {
+  return []
+}
+
 function toPlainText(markdown: string): string {
   return markdown
     .replace(/<[^>]+>/g, " ")

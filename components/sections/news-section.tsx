@@ -104,6 +104,7 @@ export async function NewsSection() {
                 <Link
                   key={item.id}
                   href={item.href}
+                  prefetch={false}
                   className="group block rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
                 >
                   {card}
