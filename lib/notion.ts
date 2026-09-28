@@ -1,5 +1,6 @@
 import { Client } from "@notionhq/client"
 import { cache } from "react"
+import { unstable_cache } from "next/cache"
 import type {
   BlockObjectResponse,
   PageObjectResponse,
@@ -253,44 +254,55 @@ const getPressSourceArticles = cache(
       process.env.NOTION_PRESS_SOURCE_PAGE_ID ?? DEFAULT_PRESS_SOURCE_PAGE_ID
 
     try {
-      const blocks = await getPressSourceBlocks(pageId)
-      const articles: PressSourceArticle[] = []
-
-      for (let titleIndex = 0; titleIndex < blocks.length; titleIndex += 1) {
-        const titleBlock = blocks[titleIndex]
-        const parsedTitle = parsePressSourceTitle(getBlockText(titleBlock))
-        if (!parsedTitle) continue
-
-        let url: string | null = null
-        for (let index = titleIndex; index < blocks.length; index += 1) {
-          const block = blocks[index]
-          const blockText = getBlockText(block)
-
-          if (
-            index > titleIndex &&
-            (block.type.startsWith("heading_") || looksLikePressTitle(blockText))
-          ) {
-            break
-          }
-
-          url = await findUrlInBlock(block)
-          if (url) break
-        }
-
-        articles.push({
-          id: titleBlock.id,
-          ...parsedTitle,
-          url,
-          lastEditedTime: titleBlock.last_edited_time,
-        })
-      }
-
-      return articles
+      return await getCachedPressSourceArticles(pageId)
     } catch (error) {
       console.error("[notion] 언론보도 원본 페이지 조회 실패:", error)
       return []
     }
   },
+)
+
+// Share the parsed public press index across home, news, sitemap and detail
+// renders. Keep failures outside the cache so a temporary Notion error cannot
+// replace a successful index with an empty list. The source page is in the key.
+const getCachedPressSourceArticles = unstable_cache(
+  async (pageId: string): Promise<PressSourceArticle[]> => {
+    const blocks = await getPressSourceBlocks(pageId)
+    const articles: PressSourceArticle[] = []
+
+    for (let titleIndex = 0; titleIndex < blocks.length; titleIndex += 1) {
+      const titleBlock = blocks[titleIndex]
+      const parsedTitle = parsePressSourceTitle(getBlockText(titleBlock))
+      if (!parsedTitle) continue
+
+      let url: string | null = null
+      for (let index = titleIndex; index < blocks.length; index += 1) {
+        const block = blocks[index]
+        const blockText = getBlockText(block)
+
+        if (
+          index > titleIndex &&
+          (block.type.startsWith("heading_") || looksLikePressTitle(blockText))
+        ) {
+          break
+        }
+
+        url = await findUrlInBlock(block)
+        if (url) break
+      }
+
+      articles.push({
+        id: titleBlock.id,
+        ...parsedTitle,
+        url,
+        lastEditedTime: titleBlock.last_edited_time,
+      })
+    }
+
+    return articles
+  },
+  ["public-press-source-articles-v1"],
+  { revalidate: 60 },
 )
 
 const getPressSourceUrl = cache(
