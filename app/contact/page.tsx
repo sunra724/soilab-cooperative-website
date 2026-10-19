@@ -8,7 +8,7 @@ import { Card, CardContent } from "@/components/ui/card"
 export const metadata: Metadata = {
   title: "문의",
   description:
-    "ESG 컨설팅, 리빙랩, 청년정책, 인지건강디자인 협업과 사업 문의를 위한 협동조합 소이랩 연락처입니다.",
+    "리빙랩 운영, 청년정책·청년지원사업, 거버넌스 설계와 AI 활용 등 협동조합 소이랩의 사업·협업 문의 연락처입니다.",
   alternates: { canonical: "/contact" },
 }
 
@@ -52,8 +52,8 @@ export default function ContactPage() {
                 함께 만들 변화를 이야기해 주세요
               </h1>
               <p className="mt-5 max-w-2xl text-lg leading-relaxed text-primary-foreground/80">
-                ESG 컨설팅, 리빙랩, 청년정책, 인지건강디자인과 관련한
-                사업·교육·협업 문의를 기다립니다.
+                리빙랩 운영과 청년정책·청년지원사업, 거버넌스 설계와 AI 활용 등
+                현장의 변화를 위한 사업·교육·협업 문의를 기다립니다.
               </p>
             </div>
           </div>
