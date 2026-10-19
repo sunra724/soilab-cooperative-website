@@ -1,53 +1,25 @@
-import { Leaf, Building2, Users, Brain } from "lucide-react"
+﻿import { ArrowDownRight } from "lucide-react"
 
-const services = [
-  {
-    icon: Leaf,
-    title: "ESG 경영컨설팅",
-    description: "K-ESG 지표 기반",
-  },
-  {
-    icon: Building2,
-    title: "리빙랩 운영",
-    description: "시민 참여형 혁신",
-  },
-  {
-    icon: Users,
-    title: "청년정책 프로그램",
-    description: "청년 역량 강화",
-  },
-  {
-    icon: Brain,
-    title: "인지건강디자인",
-    description: "치매예방 서비스",
-  },
+const navigation = [
+  { id: "livinglab", label: "리빙랩 운영" },
+  { id: "youth", label: "청년정책·청년지원" },
+  { id: "capabilities", label: "일하는 방식과 역량" },
+  { id: "cases", label: "대표 수행 사례" },
+  { id: "specialties", label: "전문 협업 분야" },
 ]
 
 export function ServicesOverview() {
   return (
-    <section className="py-12 bg-secondary/30 border-y border-border">
-      <div className="mx-auto max-w-7xl px-4 lg:px-8">
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
-          {services.map((service) => (
-            <div
-              key={service.title}
-              className="flex items-center gap-4 group"
-            >
-              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-primary/10 group-hover:bg-primary/20 transition-colors">
-                <service.icon className="h-6 w-6 text-primary" />
-              </div>
-              <div>
-                <h3 className="font-medium text-foreground text-sm lg:text-base">
-                  {service.title}
-                </h3>
-                <p className="text-xs lg:text-sm text-muted-foreground">
-                  {service.description}
-                </p>
-              </div>
-            </div>
-          ))}
-        </div>
+    <nav aria-label="사업소개 바로가기" className="border-b border-border bg-card">
+      <div className="mx-auto grid max-w-7xl grid-cols-2 px-4 lg:grid-cols-5 lg:px-8">
+        {navigation.map((item, index) => (
+          <a key={item.id} href={`#${item.id}`} className="group flex min-h-20 items-center gap-3 border-b border-border px-3 py-5 text-sm transition-colors hover:bg-secondary focus-visible:outline-2 focus-visible:outline-primary lg:border-b-0 lg:px-4">
+            <span className="text-xs text-accent">0{index + 1}</span>
+            <span className="font-medium">{item.label}</span>
+            <ArrowDownRight className="ml-auto h-4 w-4 shrink-0 text-muted-foreground group-hover:text-primary" aria-hidden="true" />
+          </a>
+        ))}
       </div>
-    </section>
+    </nav>
   )
 }

@@ -39,7 +39,7 @@ export default function OpenGraphImage() {
             <div style={{ display: "flex" }}>사회혁신을 만듭니다</div>
           </div>
           <div style={{ fontSize: 27, color: "rgba(255,255,255,.78)" }}>
-            SOILAB 2030 · AI Social Impact Lab
+            리빙랩 · 청년지원 · 거버넌스 · AI 활용
           </div>
         </div>
         <div style={{ fontSize: 24, color: "rgba(255,255,255,.68)" }}>www.soilabcoop.kr</div>

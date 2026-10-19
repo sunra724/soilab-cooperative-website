@@ -14,9 +14,9 @@ export function HeroSection() {
             <span className="text-primary">사회혁신을 만듭니다</span>
           </h1>
           <p className="mt-6 text-lg leading-relaxed text-muted-foreground">
-            협동조합 소이랩은 대구를 기반으로 청년·돌봄·지역사회의 문제를 함께 발견하고,
-            AI와 리빙랩으로 해결 가능성을 검증합니다. 현장에서 얻은 지식과 도구, 변화의 근거를
-            함께 활용하는 사회적 자산으로 만들어갑니다.
+            협동조합 소이랩은 리빙랩 운영과 청년정책·청년지원사업을 중심으로
+            지역의 변화를 만듭니다. 시민·행정·기업의 협력에 AI와 데이터를 연결하고,
+            현장에서 얻은 지식과 도구, 변화의 근거를 사회적 자산으로 축적합니다.
           </p>
           <div className="mt-10 flex flex-col gap-4 sm:flex-row sm:justify-center">
             <Button size="lg" asChild>

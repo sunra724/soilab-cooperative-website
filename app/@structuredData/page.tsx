@@ -5,7 +5,7 @@ const organizationJsonLd = {
   alternateName: "Soilab Cooperative",
   url: "https://www.soilabcoop.kr",
   description:
-    "대구를 기반으로 ESG 컨설팅, 리빙랩, 청년정책, 인지건강디자인을 수행하는 사회혁신 협동조합입니다.",
+    "리빙랩 운영과 청년정책·청년지원사업을 중심으로, 민관학 거버넌스와 AI·데이터 활용을 통해 지역의 변화를 만드는 협동조합입니다.",
   address: {
     "@type": "PostalAddress",
     addressCountry: "KR",
