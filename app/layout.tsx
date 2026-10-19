@@ -26,12 +26,12 @@ export const metadata: Metadata = {
     },
   },
   title: {
-    default: '협동조합 소이랩 | 사회혁신을 함께 만듭니다',
+    default: '협동조합 소이랩 | AI와 현장을 연결하는 사회혁신',
     template: '%s | 협동조합 소이랩',
   },
-  description: '대구 기반 사회혁신 협동조합 소이랩. ESG 컨설팅, 리빙랩, 청년정책, 도시재생, 인지건강디자인 분야에서 활동합니다.',
+  description: '대구 기반 협동조합·사회적기업 소이랩. AI와 리빙랩으로 청년·돌봄·지역문제의 해결 가능성을 검증하고 지식·도구·성과를 사회적 자산으로 축적합니다.',
   applicationName: '협동조합 소이랩',
-  keywords: ['협동조합 소이랩', '사회혁신', 'ESG 컨설팅', '리빙랩', '청년정책', '인지건강디자인', '대구'],
+  keywords: ['협동조합 소이랩', '사회혁신', 'AI 사회혁신', 'SOILAB 2030', '필란트로피', 'ESG 컨설팅', '리빙랩', '청년정책', '인지건강디자인', '대구'],
   alternates: {
     canonical: '/',
   },
@@ -40,13 +40,13 @@ export const metadata: Metadata = {
     locale: 'ko_KR',
     url: siteUrl,
     siteName: '협동조합 소이랩',
-    title: '협동조합 소이랩 | 사회혁신을 함께 만듭니다',
-    description: '대구를 기반으로 ESG 컨설팅, 리빙랩, 청년정책, 인지건강디자인을 수행하는 사회혁신 협동조합입니다.',
+    title: '협동조합 소이랩 | AI와 현장을 연결하는 사회혁신',
+    description: 'AI와 현장 실험으로 지역문제를 발견·검증하고, 해결 경험을 함께 활용하는 사회적 자산으로 축적합니다.',
   },
   twitter: {
     card: 'summary_large_image',
-    title: '협동조합 소이랩 | 사회혁신을 함께 만듭니다',
-    description: '대구 기반 사회혁신 협동조합 소이랩의 사업과 활동 소식을 확인하세요.',
+    title: '협동조합 소이랩 | AI와 현장을 연결하는 사회혁신',
+    description: 'SOILAB 2030: AI와 리빙랩으로 사회문제의 해결모델을 검증하고 확산합니다.',
   },
   icons: {
     icon: [

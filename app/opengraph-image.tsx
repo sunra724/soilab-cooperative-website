@@ -1,6 +1,6 @@
 import { ImageResponse } from "next/og"
 
-export const alt = "협동조합 소이랩 - 사회혁신을 함께 만듭니다"
+export const alt = "협동조합 소이랩 - AI와 현장을 연결하는 사회혁신"
 export const size = { width: 1200, height: 630 }
 export const contentType = "image/png"
 
@@ -35,11 +35,11 @@ export default function OpenGraphImage() {
               lineHeight: 1.12,
             }}
           >
-            <div style={{ display: "flex" }}>사회혁신을</div>
-            <div style={{ display: "flex" }}>함께 만듭니다</div>
+            <div style={{ display: "flex" }}>AI와 현장을 연결해</div>
+            <div style={{ display: "flex" }}>사회혁신을 만듭니다</div>
           </div>
           <div style={{ fontSize: 27, color: "rgba(255,255,255,.78)" }}>
-            ESG · 리빙랩 · 청년정책 · 인지건강디자인
+            SOILAB 2030 · AI Social Impact Lab
           </div>
         </div>
         <div style={{ fontSize: 24, color: "rgba(255,255,255,.68)" }}>www.soilabcoop.kr</div>

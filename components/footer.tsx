@@ -19,8 +19,8 @@ export function Footer() {
           <div className="space-y-4">
             <h3 className="font-serif text-xl font-bold">협동조합 소이랩</h3>
             <p className="text-sm text-primary-foreground/80">
-              사회혁신을 함께 만드는 대구 기반 협동조합·사회적기업입니다.
-              지역사회와 함께 더 나은 미래를 만들어갑니다.
+              AI와 현장을 연결하는 대구 기반 협동조합·사회적기업입니다.
+              지역문제의 해결 경험을 함께 활용하는 사회적 자산으로 축적합니다.
             </p>
           </div>
 
