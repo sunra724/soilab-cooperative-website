@@ -1,9 +1,9 @@
 import { z } from "zod"
 
 export const insightCategories = [
-  { id: "youth", label: "청년·고립·돌봄" },
   { id: "local", label: "지역·사회연대경제" },
   { id: "livinglab", label: "리빙랩·시민참여" },
+  { id: "youth", label: "청년·고립·돌봄" },
   { id: "ai", label: "AI·현장 도구" },
 ] as const
 
