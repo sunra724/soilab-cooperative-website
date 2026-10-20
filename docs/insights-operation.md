@@ -7,6 +7,8 @@
 - 첫 화면: 성과 아래에 최근 세 호 노출
 - 상단 메뉴와 푸터: 소이랩 인사이트
 
+주제의 중요도와 표시 순서는 지역·사회연대경제 → 리빙랩·시민참여 → 청년·고립·돌봄 → AI·현장 도구다. 목록의 전체 탭을 맨 앞에 두며, 호별 목차·본문과 주제 배지도 이 순서를 따른다. 공통 순서는 `lib/insights-schema.ts`의 `insightCategories`에서 관리한다.
+
 ## 자동 게시
 
 GitHub Actions `Publish SOILAB Insights`가 매주 월요일 00:00 UTC(한국시간 09:00)에 실행된다. GitHub 예약 실행은 지연될 수 있다. 수동 실행은 Actions의 `Run workflow`로 한다. 발행본이 이미 존재하면 AI 호출과 재게시를 생략한다.
