@@ -1,0 +1,41 @@
+name: Publish SOILAB Insights
+
+on:
+  schedule:
+    # Monday 00:00 UTC = Monday 09:00 Asia/Seoul. GitHub may delay scheduled runs.
+    - cron: '0 0 * * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: soilab-insights-publication
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+      - run: npm ci --ignore-scripts
+      - run: node --test tests/insights.test.mjs
+      - name: Collect, verify and publish the previous week
+        run: node scripts/insights/publish.mjs --publish
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          NKIS_API_KEY: ${{ secrets.NKIS_API_KEY }}
+      - name: Preserve publication review
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: insights-review-${{ github.run_id }}
+          path: .local/insights/review.json
+          if-no-files-found: ignore
+          retention-days: 30

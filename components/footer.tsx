@@ -6,6 +6,7 @@ const navigation = [
   { name: "소이랩 소개", href: "/about" },
   { name: "사업소개", href: "/services" },
   { name: "실적·성과", href: "/impact" },
+  { name: "소이랩 인사이트", href: "/insights" },
   { name: "행사·소식", href: "/news" },
   { name: "문의", href: "/contact" },
 ]
