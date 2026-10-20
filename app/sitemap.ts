@@ -1,6 +1,7 @@
 import type { MetadataRoute } from "next"
 import { getAnnouncements, getEvents } from "@/lib/notion"
 import { getNewsDetailHref } from "@/lib/news"
+import { getInsights } from "@/lib/insights"
 
 const siteUrl = "https://www.soilabcoop.kr"
 
@@ -8,10 +9,11 @@ const siteUrl = "https://www.soilabcoop.kr"
 export const revalidate = 60
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const routes = ["", "/about", "/services", "/impact", "/news", "/contact"]
-  const [events, announcements] = await Promise.all([
+  const routes = ["", "/about", "/services", "/impact", "/insights", "/news", "/contact"]
+  const [events, announcements, insights] = await Promise.all([
     getEvents(),
     getAnnouncements(),
+    getInsights(),
   ])
 
   const staticRoutes: MetadataRoute.Sitemap = routes.map((route) => ({
@@ -35,5 +37,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     })),
   ]
 
-  return [...staticRoutes, ...newsRoutes]
+  return [...staticRoutes, ...newsRoutes, ...insights.map(issue => ({
+    url: `${siteUrl}/insights/${issue.id}`,
+    lastModified: new Date(issue.publishedAt),
+    changeFrequency: "monthly" as const,
+    priority: 0.7,
+  }))]
 }
