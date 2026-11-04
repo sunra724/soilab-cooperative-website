@@ -24,16 +24,20 @@ export function ContactForm() {
     setError("")
     try {
       const response = await fetch("/api/contact", {
+        signal: AbortSignal.timeout(20_000),
         method: "POST", headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ name: values.get("name"), email: values.get("email"), topic: values.get("topic"), message: values.get("message"), consent: values.get("consent") === "on", website: values.get("website") || "", submissionId: submissionId.current }),
       })
-      const result = await response.json()
-      if (!response.ok || !result.ok) throw new Error(result.error || "접수 결과를 확인하지 못했습니다. 잠시 후 다시 시도해 주세요.")
+      const result = await response.json().catch(() => null)
+      if (!response.ok || result?.ok !== true) {
+        setError(typeof result?.error === "string" ? result.error : "접수 결과를 확인하지 못했습니다. 잠시 후 다시 시도하거나 전화·이메일로 문의해 주세요.")
+        return
+      }
       form.reset()
       setSent(true)
       if (process.env.NEXT_PUBLIC_GA_ID) sendGAEvent("event", "generate_lead", { form_name: "business_inquiry" })
-    } catch (reason) {
-      setError(reason instanceof Error ? reason.message : "접수 결과를 확인하지 못했습니다. 전화·이메일로 문의해 주세요.")
+    } catch {
+      setError("연결이 원활하지 않습니다. 잠시 후 다시 시도하거나 전화·이메일로 문의해 주세요.")
     } finally {
       setPending(false)
       requestAnimationFrame(() => statusRef.current?.focus())
