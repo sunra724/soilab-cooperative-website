@@ -8,7 +8,7 @@ const specialistIcons = { esg: Leaf, cognitive: Brain }
 
 export function ServicesSection() {
   return (
-    <section aria-labelledby="home-services-title" className="bg-secondary/40 py-20 lg:py-28">
+    <section aria-labelledby="home-services-title" className="bg-secondary/40 py-14 lg:py-24">
       <div className="mx-auto max-w-7xl px-4 lg:px-8">
         <div className="flex flex-col justify-between gap-6 sm:flex-row sm:items-end">
           <div>

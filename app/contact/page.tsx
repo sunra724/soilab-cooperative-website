@@ -4,13 +4,10 @@ import { Header } from "@/components/header"
 import { Footer } from "@/components/footer"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
+import { ContactForm } from "@/components/contact-form"
+import { pageMetadata } from "@/lib/site"
 
-export const metadata: Metadata = {
-  title: "문의",
-  description:
-    "리빙랩 운영, 청년정책·청년지원사업, 거버넌스 설계와 AI 활용 등 협동조합 소이랩의 사업·협업 문의 연락처입니다.",
-  alternates: { canonical: "/contact" },
-}
+export const metadata: Metadata = pageMetadata("/contact", "사업·협업 문의", "리빙랩 운영, 청년정책·청년지원사업, 거버넌스 설계와 AI 활용 등 협동조합 소이랩의 사업·교육·협업을 문의하세요. 온라인 문의, 전화, 이메일로 상담할 수 있습니다.")
 
 const contactItems = [
   {
@@ -19,6 +16,7 @@ const contactItems = [
     description: "사업 및 협업 문의",
     href: "tel:053-941-9003",
     icon: Phone,
+    action: "전화하기",
   },
   {
     title: "이메일",
@@ -26,6 +24,7 @@ const contactItems = [
     description: "자료를 포함한 문의에 적합합니다",
     href: "mailto:soilabcoop@gmail.com?subject=%EC%86%8C%EC%9D%B4%EB%9E%A9%20%ED%99%88%ED%8E%98%EC%9D%B4%EC%A7%80%20%EB%AC%B8%EC%9D%98",
     icon: Mail,
+    action: "이메일 보내기",
   },
   {
     title: "오시는 길",
@@ -33,6 +32,7 @@ const contactItems = [
     description: "방문 전 연락을 부탁드립니다",
     href: "https://map.naver.com/p/search/%EB%8C%80%EA%B5%AC%EA%B4%91%EC%97%AD%EC%8B%9C%20%EB%B6%81%EA%B5%AC%20%EB%8C%80%ED%98%84%EB%A1%9C%203",
     icon: MapPin,
+    action: "길찾기",
     external: true,
   },
 ]
@@ -61,6 +61,7 @@ export default function ContactPage() {
 
         <section className="py-16 lg:py-24">
           <div className="mx-auto max-w-7xl px-4 lg:px-8">
+            <div className="mb-12"><ContactForm /></div>
             <div className="grid gap-6 md:grid-cols-3">
               {contactItems.map((item) => (
                 <a
@@ -79,7 +80,7 @@ export default function ContactPage() {
                       <p className="mt-1 break-words font-semibold text-foreground">{item.value}</p>
                       <p className="mt-3 text-sm text-muted-foreground">{item.description}</p>
                       <span className="mt-5 inline-flex items-center text-sm font-medium text-primary">
-                        확인하기
+                        {item.action}
                         <ArrowUpRight className="ml-1 h-4 w-4" aria-hidden="true" />
                       </span>
                     </CardContent>

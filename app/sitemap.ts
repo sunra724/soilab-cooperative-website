@@ -37,10 +37,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     })),
   ]
 
-  return [...staticRoutes, ...newsRoutes, ...insights.map(issue => ({
+  const entries = [...staticRoutes, ...newsRoutes, ...insights.map(issue => ({
     url: `${siteUrl}/insights/${issue.id}`,
     lastModified: new Date(issue.publishedAt),
     changeFrequency: "monthly" as const,
     priority: 0.7,
   }))]
+  return [...new Map(entries.map(entry => [entry.url, entry])).values()]
 }

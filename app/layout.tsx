@@ -3,6 +3,7 @@ import { Noto_Sans_KR, Noto_Serif_KR } from 'next/font/google'
 import { Analytics } from '@vercel/analytics/next'
 import { GoogleAnalytics } from '@next/third-parties/google'
 import './globals.css'
+import { siteGraph } from '@/lib/site'
 
 const siteUrl = 'https://www.soilabcoop.kr'
 
@@ -82,6 +83,7 @@ export default function RootLayout({
     <html lang="ko" className={`${notoSansKR.variable} ${notoSerifKR.variable}`}>
       <head>{structuredData}</head>
       <body className="font-sans antialiased">
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(siteGraph).replace(/</g, '\\u003c') }} />
         {children}
         {process.env.NODE_ENV === 'production' && <Analytics />}
         {process.env.NEXT_PUBLIC_GA_ID && (

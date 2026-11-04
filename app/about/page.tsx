@@ -6,13 +6,9 @@ import { CoreValuesSection } from "@/components/sections/about/core-values-secti
 import { OrganizationSection } from "@/components/sections/about/organization-section"
 import { TimelineSection } from "@/components/sections/about/timeline-section"
 import { StrategySection } from "@/components/sections/about/strategy-section"
+import { pageMetadata } from "@/lib/site"
 
-export const metadata = {
-  title: "소이랩 소개",
-  description:
-    "협동조합 소이랩의 미션과 SOILAB 2030 방향. AI와 리빙랩으로 청년·돌봄·지역문제의 해결모델을 검증하고 사회적 자산으로 축적합니다.",
-  alternates: { canonical: "/about" },
-}
+export const metadata = pageMetadata("/about", "소이랩 소개", "협동조합 소이랩의 미션과 SOILAB 2030 방향. AI와 리빙랩으로 청년·돌봄·지역문제의 해결모델을 검증하고 사회적 자산으로 축적합니다.")
 
 export default function AboutPage() {
   return (

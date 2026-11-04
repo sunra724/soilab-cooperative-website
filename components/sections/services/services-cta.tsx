@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button"
 import { ExternalLink, Mail } from "lucide-react"
+import Link from "next/link"
 
 export function ServicesCTA() {
   return (
@@ -21,10 +22,10 @@ export function ServicesCTA() {
               className="w-full sm:w-auto"
               asChild
             >
-              <a href="mailto:soilabcoop@gmail.com">
+              <Link href="/contact#inquiry">
                 <Mail className="mr-2 h-5 w-5" />
                 사업·협업 문의하기
-              </a>
+              </Link>
             </Button>
             <Button
               size="lg"

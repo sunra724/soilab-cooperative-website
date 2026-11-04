@@ -1,16 +1,11 @@
-import { Metadata } from "next"
+import { pageMetadata } from "@/lib/site"
 import { Header } from "@/components/header"
 import { Footer } from "@/components/footer"
 import { NewsHero } from "@/components/sections/news/news-hero"
 import { NewsTabs } from "@/components/sections/news/news-tabs"
 import { getEvents, getAnnouncements } from "@/lib/notion"
 
-export const metadata: Metadata = {
-  title: "행사 · 소식",
-  description:
-    "소이랩의 프로그램, 행사, 그리고 최신 소식을 확인하세요. 청년정책, ESG 컨설팅, 리빙랩, 인지건강 관련 다양한 행사에 참여해보세요.",
-  alternates: { canonical: "/news" },
-}
+export const metadata = pageMetadata("/news", "행사 · 소식", "소이랩의 프로그램, 행사, 그리고 최신 소식을 확인하세요. 청년정책, ESG 컨설팅, 리빙랩, 인지건강 관련 다양한 행사에 참여해보세요.")
 
 // 60초마다 재검증 (ISR)
 export const revalidate = 60

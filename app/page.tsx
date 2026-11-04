@@ -7,6 +7,7 @@ import { StatsSection } from "@/components/sections/stats-section"
 import { NewsSection } from "@/components/sections/news-section"
 import { InsightsSection } from "@/components/sections/insights-section"
 import { SocialImpactSection } from "@/components/sections/social-impact-section"
+import { ServiceCases } from "@/components/sections/services/service-cases"
 
 export const revalidate = 60
 
@@ -16,12 +17,13 @@ export default function HomePage() {
       <Header />
       <main className="flex-1">
         <HeroSection />
-        <SocialImpactSection />
-        <ValuesSection />
         <ServicesSection />
+        <ServiceCases />
         <StatsSection />
         <InsightsSection />
         <NewsSection />
+        <SocialImpactSection />
+        <ValuesSection />
       </main>
       <Footer />
     </div>
