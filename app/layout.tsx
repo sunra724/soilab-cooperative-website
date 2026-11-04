@@ -1,23 +1,11 @@
 import type { Metadata, Viewport } from 'next'
-import { Noto_Sans_KR, Noto_Serif_KR } from 'next/font/google'
 import { Analytics } from '@vercel/analytics/next'
 import { GoogleAnalytics } from '@next/third-parties/google'
 import './globals.css'
+import './fonts.css'
 import { siteGraph } from '@/lib/site'
 
 const siteUrl = 'https://www.soilabcoop.kr'
-
-const notoSansKR = Noto_Sans_KR({
-  subsets: ['latin'],
-  weight: ['400', '500', '700'],
-  variable: '--font-noto-sans-kr',
-})
-
-const notoSerifKR = Noto_Serif_KR({
-  subsets: ['latin'],
-  weight: ['400', '600', '700'],
-  variable: '--font-noto-serif-kr',
-})
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
@@ -80,7 +68,7 @@ export default function RootLayout({
   structuredData: React.ReactNode
 }>) {
   return (
-    <html lang="ko" className={`${notoSansKR.variable} ${notoSerifKR.variable}`}>
+    <html lang="ko">
       <head>{structuredData}</head>
       <body className="font-sans antialiased">
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(siteGraph).replace(/</g, '\\u003c') }} />
