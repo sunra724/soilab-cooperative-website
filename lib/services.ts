@@ -36,7 +36,7 @@ export const specialistServices = [
 ] as const
 
 export const serviceCases = [
-  { category: "스마트시티 · 거버넌스", title: "고양특례시 스마트시티 거버넌스", question: "여러 서비스와 기관 사이에서 시민의 의견은 어떻게 반영될까?", role: "전문가 자문, 시민 리빙랩과 기업 검토를 연결하는 협력 구조를 설계·운영했습니다.", output: "시민 의견 → 실무 검토 → 기업 회신 → 반영 기록", href: "https://lab.soilabcoop.kr/cases/goyang-smartcity" },
-  { category: "대학·기업 협력 · 사용자 실증", title: "커뮤니티 리빙랩 프로젝트", question: "지역문제 해결 솔루션을 실제 사용자의 경험으로 검증하려면?", role: "사회적경제기업과 학생연구원을 연결해 사용자 조사, 실증과 사업모델 개선을 지원했습니다.", output: "기업 과제 → 팀 구성 → 사용자 실증 → 개선안", href: "https://lab.soilabcoop.kr/cases/community-livinglab" },
-  { category: "청년 참여 · 지역문제 해결", title: "동성로 소셜 리빙랩 YOUNG구소", question: "청년의 아이디어가 실제 상권에서 쓰이는 결과물이 되려면?", role: "청년의 현장 탐색과 워크숍을 운영하고, 상권의 문제를 재정의해 프로토타입 제작으로 연결했습니다.", output: "현장 탐색 → 문제 재정의 → 제작 → 현장 적용", href: "https://lab.soilabcoop.kr/cases/dongseongro-younggu" },
+  { category: "스마트시티 · 거버넌스", title: "고양특례시 스마트시티 거버넌스", question: "여러 서비스와 기관 사이에서 시민의 의견은 어떻게 반영될까?", role: "전문가 자문, 시민 리빙랩과 기업 검토를 연결하는 협력 구조를 설계·운영했습니다.", output: "시민 의견 → 실무 검토 → 기업 회신 → 반영 기록", result: "실무자문 의견 326건 중 256건 수용(78.5%)", period: "2025.4 - 2026.6", href: "https://lab.soilabcoop.kr/cases/goyang-smartcity" },
+  { category: "대학·기업 협력 · 사용자 실증", title: "커뮤니티 리빙랩 프로젝트", question: "지역문제 해결 솔루션을 실제 사용자의 경험으로 검증하려면?", role: "사회적경제기업과 학생연구원을 연결해 사용자 조사, 실증과 사업모델 개선을 지원했습니다.", output: "기업 과제 → 팀 구성 → 사용자 실증 → 개선안", result: "사회적경제기업 4개소·학생연구원 8명, 워크숍 13회·실증 12회", period: "2025.8 - 2026.1", href: "https://lab.soilabcoop.kr/cases/community-livinglab" },
+  { category: "청년 참여 · 지역문제 해결", title: "동성로 소셜 리빙랩 YOUNG구소", question: "청년의 아이디어가 실제 상권에서 쓰이는 결과물이 되려면?", role: "청년의 현장 탐색과 워크숍을 운영하고, 상권의 문제를 재정의해 프로토타입 제작으로 연결했습니다.", output: "현장 탐색 → 문제 재정의 → 제작 → 현장 적용", result: "학생 19명·4팀이 현장활동 12회, 프로토타입 4개 제작", period: "2025.10 - 2025.12", href: "https://lab.soilabcoop.kr/cases/dongseongro-younggu" },
 ] as const

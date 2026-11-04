@@ -57,8 +57,8 @@ export function ServiceDetailCards() {
                   <a href="https://soilab-youth.kr/" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 underline-offset-4 hover:underline">
                     고립·은둔청년 지원 정보<ArrowUpRight className="h-4 w-4" aria-hidden="true" /><span className="sr-only"> (새 창)</span>
                   </a>
-                  <a href="https://nest.soilabcoop.kr/" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 underline-offset-4 hover:underline">
-                    남구 청년 둥지(N.E.S.T)<ArrowUpRight className="h-4 w-4" aria-hidden="true" /><span className="sr-only"> (새 창)</span>
+                  <a href="https://lab.soilabcoop.kr/cases/youth-nest" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 underline-offset-4 hover:underline">
+                    남구 청년 둥지(N.E.S.T) 사업 안내<ArrowUpRight className="h-4 w-4" aria-hidden="true" /><span className="sr-only"> (새 창)</span>
                   </a>
                 </div>
               )}

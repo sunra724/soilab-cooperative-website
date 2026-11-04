@@ -91,7 +91,6 @@ export function EventsSection({ events }: EventsSectionProps) {
               href={getNewsDetailHref(event.id)}
               prefetch={false}
               className="group block rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-              aria-label={`${event.title} 자세히 보기`}
             >
               {content}
             </Link>

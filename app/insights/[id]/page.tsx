@@ -6,6 +6,8 @@ import { Header } from "@/components/header"
 import { Footer } from "@/components/footer"
 import { getInsight, issueNumber, shortDate } from "@/lib/insights"
 import { insightCategories } from "@/lib/insights-schema"
+import { articleMetadata, articleJsonLd } from "@/lib/article-seo"
+import { SITE_NAME } from "@/lib/site"
 
 export const revalidate = 300
 type Props = { params: Promise<{ id: string }> }
@@ -15,7 +17,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   if (!/^\d{4}-\d{2}-\d{2}$/.test(id)) return {}
   const issue = await getInsight(id)
   if (!issue) return {}
-  return { title: `소이랩 인사이트 No.${issueNumber(issue.number)} · ${issue.title}`, description: issue.introduction, alternates: { canonical: `/insights/${id}` }, openGraph: { type: "article", title: issue.title, description: issue.introduction, url: `/insights/${id}`, publishedTime: issue.publishedAt } }
+  return articleMetadata({ path: `/insights/${id}`, title: `소이랩 인사이트 No.${issueNumber(issue.number)} · ${issue.title}`, description: issue.introduction, publishedAt: issue.publishedAt })
 }
 
 export default async function InsightPage({ params }: Props) {
@@ -27,6 +29,7 @@ export default async function InsightPage({ params }: Props) {
   const publishedDate = new Intl.DateTimeFormat("sv-SE", { timeZone: "Asia/Seoul" }).format(new Date(issue.publishedAt))
   return <div className="flex min-h-screen flex-col"><Header /><main className="flex-1">
     <article className="mx-auto max-w-5xl px-4 py-10 sm:py-16 lg:px-8">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(articleJsonLd({ path: `/insights/${id}`, title: issue.title, description: issue.introduction, publishedAt: issue.publishedAt, author: SITE_NAME, citations: issue.items.map(item => item.url) }, "BlogPosting")).replace(/</g, "\\u003c") }} />
       <Link href="/insights" className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-primary"><ArrowLeft className="h-4 w-4" aria-hidden="true" /> 인사이트 목록</Link>
       <header className="mt-9 border-t-4 border-primary pb-10 pt-7 sm:pb-14">
         <p className="text-xs font-semibold tracking-[0.2em] text-primary">SOILAB WEEKLY INSIGHT</p>
@@ -35,10 +38,10 @@ export default async function InsightPage({ params }: Props) {
         <div className="mt-6 flex flex-wrap gap-x-7 gap-y-2 text-xs leading-6 text-muted-foreground"><p>발행일 <time dateTime={publishedDate} className="ml-2 text-foreground">{shortDate(publishedDate)}</time></p><p>조사기간 <span className="ml-2 text-foreground">{shortDate(issue.periodStart)} — {shortDate(issue.periodEnd)}</span></p><p>발행 <span className="ml-2 text-foreground">협동조합 소이랩</span></p></div>
         <p className="mt-8 max-w-3xl text-base leading-8 text-foreground/80">{issue.introduction}</p>
       </header>
-      <aside className="rounded-2xl bg-primary px-6 py-7 text-white sm:px-8" aria-labelledby="weekly-question"><p id="weekly-question" className="text-xs font-medium tracking-[0.14em] text-white/70">이번 주, 함께 묻는 질문</p><p className="mt-3 font-serif text-xl leading-relaxed sm:text-2xl">{issue.weeklyQuestion}</p></aside>
+      <aside className="rounded-2xl bg-primary px-6 py-7 text-white sm:px-8" aria-labelledby="weekly-question"><p id="weekly-question" className="text-xs font-medium tracking-[0.14em] text-white/85">이번 주, 함께 묻는 질문</p><p className="mt-3 font-serif text-xl leading-relaxed sm:text-2xl">{issue.weeklyQuestion}</p></aside>
       <nav aria-label="이번 호 목차" className="my-10 flex flex-wrap gap-2 border-b border-border pb-8">{categories.map((category, index) => <a key={category.id} href={`#${category.id}`} className="rounded-full border border-border px-4 py-2.5 text-xs hover:border-primary hover:text-primary">{String(index + 1).padStart(2, "0")} &nbsp; {category.label}</a>)}</nav>
       {categories.map((category, index) => <section key={category.id} id={category.id} className="scroll-mt-28 pb-10" aria-labelledby={`${category.id}-title`}>
-        <div className="mb-6 flex items-baseline gap-4 border-b border-primary/30 pb-4"><span className="font-serif text-3xl text-primary/50">{String(index + 1).padStart(2, "0")}</span><h2 id={`${category.id}-title`} className="font-serif text-xl font-semibold sm:text-2xl">{category.label}</h2></div>
+        <div className="mb-6 flex items-baseline gap-4 border-b border-primary/30 pb-4"><span className="font-serif text-3xl text-primary/80">{String(index + 1).padStart(2, "0")}</span><h2 id={`${category.id}-title`} className="font-serif text-xl font-semibold sm:text-2xl">{category.label}</h2></div>
         <div className="space-y-6">{issue.items.filter(item => item.category === category.id).map(item => <section key={item.id} className="rounded-2xl border border-border bg-white p-5 sm:p-8" aria-labelledby={`item-${item.id}`}>
           <p className="text-xs leading-6 text-muted-foreground">{item.publishedAt ? shortDate(item.publishedAt) : `${item.publicationYear}년 발행 · 발행일 미확인`} <span className="mx-1">|</span> {item.publisher} <span className="mx-1">|</span> {item.kind}</p>
           <h3 id={`item-${item.id}`} className="mt-3 font-serif text-xl font-semibold leading-relaxed sm:text-2xl">{item.title}</h3>

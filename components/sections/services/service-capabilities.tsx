@@ -38,7 +38,7 @@ export function ServiceCapabilities() {
           <h2 id="capabilities-title" className="font-serif text-3xl font-semibold leading-normal sm:text-4xl">
             사람의 협력에<br />기술과 근거를 더합니다.
           </h2>
-          <p className="text-base leading-8 text-white/75 lg:self-end">
+          <p className="text-base leading-8 text-white/85 lg:self-end">
             현장을 이해하는 기획력, 다양한 주체를 연결하는 조정력,
             디지털 도구를 직접 만들고 적용하는 실행력으로 사업을 운영합니다.
           </p>
@@ -48,7 +48,7 @@ export function ServiceCapabilities() {
             <article key={capability.title} className="flex flex-col border-t border-white/20 pt-7">
               <capability.icon className="h-7 w-7 text-[#d4e7cc]" aria-hidden="true" />
               <h3 className="mt-5 text-xl font-semibold">{capability.title}</h3>
-              <p className="mb-6 mt-4 text-sm leading-7 text-white/75">{capability.description}</p>
+              <p className="mb-6 mt-4 text-sm leading-7 text-white/85">{capability.description}</p>
               <div className="mt-auto">
                 <p className="text-xs leading-6 text-[#d4e7cc]">{capability.evidence}</p>
                 <a href={capability.href} target="_blank" rel="noopener noreferrer" className="mt-4 inline-flex items-center gap-2 text-sm font-medium underline-offset-4 hover:underline">
@@ -61,7 +61,7 @@ export function ServiceCapabilities() {
         <div className="mt-12 rounded-xl border border-white/20 bg-white/[0.04] p-6 sm:p-8">
           <div className="flex flex-wrap items-baseline gap-x-4 gap-y-2">
             <h3 className="text-base font-semibold">소이랩의 실증·환류 과정</h3>
-            <p className="text-xs text-white/65">의견을 모으는 단계부터 결과를 돌려주는 단계까지</p>
+            <p className="text-xs text-white/85">의견을 모으는 단계부터 결과를 돌려주는 단계까지</p>
           </div>
           <ol className="mt-6 grid gap-x-4 gap-y-5 sm:grid-cols-3 lg:grid-cols-6">
             {steps.map((step, index) => (

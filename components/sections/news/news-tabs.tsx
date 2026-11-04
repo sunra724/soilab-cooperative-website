@@ -19,14 +19,14 @@ export function NewsTabs({ events, announcements }: NewsTabsProps) {
           <TabsList className="mb-8 w-full sm:w-auto h-auto p-1 bg-muted">
             <TabsTrigger
               value="events"
-              className="flex-1 sm:flex-initial px-6 py-3 gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
+              className="min-w-0 flex-1 sm:flex-initial px-2 sm:px-6 py-3 gap-1 sm:gap-2 text-xs sm:text-sm data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
             >
               <CalendarDays className="h-4 w-4" />
               행사 · 프로그램
             </TabsTrigger>
             <TabsTrigger
               value="announcements"
-              className="flex-1 sm:flex-initial px-6 py-3 gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
+              className="min-w-0 flex-1 sm:flex-initial px-2 sm:px-6 py-3 gap-1 sm:gap-2 text-xs sm:text-sm data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
             >
               <Newspaper className="h-4 w-4" />
               언론보도 · 소식

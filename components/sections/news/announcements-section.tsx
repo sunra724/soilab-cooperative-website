@@ -62,7 +62,6 @@ export function AnnouncementsSection({ announcements }: AnnouncementsSectionProp
             href={getNewsDetailHref(item.id)}
             prefetch={false}
             className="group block rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-            aria-label={`${item.title} 자세히 보기`}
           >
             <Card className="border border-border bg-card shadow-sm transition-all duration-300 hover:border-primary/30 hover:shadow-md">
               {inner}

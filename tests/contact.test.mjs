@@ -18,7 +18,7 @@ test('valid contact is accepted only after the mail provider returns a receipt; 
   }
   const response = await handleContact(request(input), { env, fetcher })
   assert.equal(response.status, 200)
-  assert.deepEqual(await response.json(), { ok: true })
+  assert.deepEqual(await response.json(), { ok: true, reference: input.submissionId })
   assert.equal(sent[0].url, 'https://api.resend.com/emails')
   assert.deepEqual(sent[0].payload.to, ['soilabcoop@gmail.com'])
   assert.equal(sent[0].payload.reply_to, input.email)
@@ -64,4 +64,17 @@ test('a burst from one client is rejected before calling the provider again', as
     assert.equal(response.status, index < 5 ? 200 : 429)
   }
   assert.equal(count, 5)
+})
+
+test('delivery logs identify a receipt without leaking inquiry content or provider error details', async () => {
+  const input = valid(); const logs = []
+  const logger = { info: (...args) => logs.push(args), warn: (...args) => logs.push(args) }
+  for (const [status, receipt] of [[200, { id: 'receipt-123' }], [422, { message: input.email }], [200, { id: '' }]]) {
+    const response = await handleContact(request(input), { env, logger, fetcher: async () => Response.json(receipt, { status }) })
+    assert.equal(response.status, receipt.id ? 200 : 502)
+  }
+  const serialized = JSON.stringify(logs)
+  assert.ok(serialized.includes(input.submissionId))
+  assert.ok(serialized.includes('receipt-123'))
+  for (const value of [input.name, input.email, input.message, env.CONTACT_RESEND_API_KEY]) assert.ok(!serialized.includes(value))
 })

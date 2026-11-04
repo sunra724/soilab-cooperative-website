@@ -1,0 +1,8 @@
+.git/
+.next/
+node_modules/
+.vercel/
+.claude/
+.env*
+*.tsbuildinfo
+soilabcoop_json-ld_*.md

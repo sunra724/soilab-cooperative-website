@@ -1,4 +1,4 @@
-﻿import { ArrowDown, ArrowRight, Check, Network } from "lucide-react"
+import { ArrowDown, ArrowRight, Check, Network } from "lucide-react"
 import { Button } from "@/components/ui/button"
 
 const approach = [
@@ -38,7 +38,7 @@ export function ServicesHero() {
         </div>
         <div className="rounded-2xl border border-white/20 bg-white/[0.05] p-6 sm:p-8">
           <div className="mb-7 flex items-center justify-between border-b border-white/15 pb-5">
-            <p className="text-xs font-medium tracking-[0.16em] text-white/70">SOILAB WORKING MODEL</p>
+            <p className="text-xs font-medium tracking-[0.16em] text-white/85">SOILAB WORKING MODEL</p>
             <Network className="h-5 w-5 text-[#d4e7cc]" aria-hidden="true" />
           </div>
           <ol className="space-y-6">
@@ -47,7 +47,7 @@ export function ServicesHero() {
                 <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-[#d4e7cc]/40 text-xs text-[#d4e7cc]">{step.number}</span>
                 <div>
                   <p className="text-lg font-medium">{step.title}</p>
-                  <p className="mt-1 text-sm leading-6 text-white/65">{step.detail}</p>
+                  <p className="mt-1 text-sm leading-6 text-white/85">{step.detail}</p>
                 </div>
               </li>
             ))}

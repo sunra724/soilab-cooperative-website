@@ -5,14 +5,10 @@ import { Footer } from "@/components/footer"
 import { IssueCard } from "@/components/insights/issue-card"
 import { getInsights } from "@/lib/insights"
 import { insightCategories } from "@/lib/insights-schema"
+import { pageMetadata } from "@/lib/site"
 
 export const revalidate = 300
-export const metadata: Metadata = {
-  title: "소이랩 인사이트",
-  description: "청년·돌봄, 지역·사회연대경제, 리빙랩·시민참여, AI의 정책과 연구를 소이랩의 현장 질문으로 연결하는 주간 브리핑입니다.",
-  alternates: { canonical: "/insights" },
-  openGraph: { title: "소이랩 인사이트", description: "지역의 변화를 읽고, 현장으로 연결합니다.", url: "/insights" },
-}
+export const metadata: Metadata = pageMetadata("/insights", "소이랩 인사이트", "청년·돌봄, 지역·사회연대경제, 리빙랩·시민참여, AI의 정책과 연구를 소이랩의 현장 질문으로 연결하는 주간 브리핑입니다.")
 
 export default async function InsightsPage({ searchParams }: { searchParams: Promise<{ topic?: string }> }) {
   const [issues, params] = await Promise.all([getInsights(), searchParams])

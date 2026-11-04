@@ -1,3 +1,5 @@
+import { ProfileDownload } from "@/components/profile-download"
+
 export function AboutHero() {
   return (
     <section className="relative overflow-hidden bg-gradient-to-b from-secondary/50 to-background py-16 lg:py-24">
@@ -13,6 +15,7 @@ export function AboutHero() {
             협동조합 소이랩은 대구를 기반으로 사회문제 해결과
             지역 발전을 위해 활동하는 협동조합·사회적기업입니다.
           </p>
+          <div className="mt-7"><ProfileDownload /></div>
         </div>
       </div>
 

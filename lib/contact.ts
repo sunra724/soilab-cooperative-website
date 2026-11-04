@@ -11,7 +11,7 @@ const inputSchema = z.object({
   submissionId: z.string().uuid(),
 }).strict()
 
-type Options = { env?: NodeJS.ProcessEnv; fetcher?: typeof fetch; now?: () => number }
+type Options = { env?: NodeJS.ProcessEnv; fetcher?: typeof fetch; now?: () => number; logger?: Pick<Console, "info" | "warn"> }
 // A bounded, best-effort burst limit. Provider idempotency also covers retries
 // across function instances; this memory cache is deliberately not a database.
 const requests = new Map<string, number[]>()
@@ -21,7 +21,7 @@ function result(status: number, body: object) {
   return Response.json(body, { status, headers: { "Cache-Control": "no-store", "X-Robots-Tag": "noindex, nofollow" } })
 }
 
-export async function handleContact(request: Request, { env = process.env, fetcher = fetch, now = Date.now }: Options = {}) {
+export async function handleContact(request: Request, { env = process.env, fetcher = fetch, now = Date.now, logger = console }: Options = {}) {
   if (request.headers.get("origin") !== new URL(request.url).origin) return result(403, { error: "홈페이지에서 다시 문의해 주세요." })
   if (!request.headers.get("content-type")?.startsWith("application/json")) return result(415, { error: "문의 내용을 확인해 주세요." })
 
@@ -61,7 +61,7 @@ export async function handleContact(request: Request, { env = process.env, fetch
     requests.set(key, [...recent, time])
   }
 
-  const text = [`기관·담당자: ${data.name}`, `회신 이메일: ${data.email}`, `문의 분야: ${data.topic}`, "", data.message].join("\n")
+  const text = [`접수번호: ${data.submissionId}`, `기관·담당자: ${data.name}`, `회신 이메일: ${data.email}`, `문의 분야: ${data.topic}`, "", data.message].join("\n")
   const fingerprint = createHash("sha256").update(text).digest("hex").slice(0, 32)
   try {
     const response = await fetcher("https://api.resend.com/emails", {
@@ -71,9 +71,14 @@ export async function handleContact(request: Request, { env = process.env, fetch
       signal: AbortSignal.timeout(12_000),
     })
     const receipt = await response.json()
-    if (!response.ok || typeof receipt.id !== "string") return result(502, { error: "접수 결과를 확인하지 못했습니다. 잠시 후 다시 시도하거나 전화·이메일로 문의해 주세요." })
-    return result(200, { ok: true })
+    if (!response.ok || typeof receipt.id !== "string" || !receipt.id) {
+      logger.warn("contact_delivery_failed", { reference: data.submissionId, providerStatus: response.status })
+      return result(502, { error: "접수 결과를 확인하지 못했습니다. 잠시 후 다시 시도하거나 전화·이메일로 문의해 주세요." })
+    }
+    logger.info("contact_delivery_accepted", { reference: data.submissionId, receiptId: receipt.id })
+    return result(200, { ok: true, reference: data.submissionId })
   } catch {
+    logger.warn("contact_delivery_unconfirmed", { reference: data.submissionId })
     return result(502, { error: "접수 결과를 확인하지 못했습니다. 잠시 후 다시 시도하거나 전화·이메일로 문의해 주세요." })
   }
 }

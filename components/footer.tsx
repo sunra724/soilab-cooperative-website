@@ -74,7 +74,7 @@ export function Footer() {
         </div>
 
         <div className="mt-12 border-t border-primary-foreground/20 pt-8">
-          <p className="text-center text-sm text-primary-foreground/60">
+          <p className="text-center text-sm text-primary-foreground/85">
             © {new Date().getFullYear()} 협동조합 소이랩. All rights reserved.
           </p>
         </div>

@@ -16,6 +16,7 @@ import { Button } from "@/components/ui/button"
 import { NotionContent } from "@/components/sections/news/notion-content"
 import { getNewsDetail } from "@/lib/notion"
 import { getNewsDetailHref } from "@/lib/news"
+import { articleMetadata, articleJsonLd } from "@/lib/article-seo"
 
 interface NewsDetailPageProps {
   params: Promise<{ id: string }>
@@ -63,29 +64,7 @@ export async function generateMetadata({
 
   const description = getDescription(detail.description, detail.markdown)
   const canonical = getNewsDetailHref(detail.id)
-  const images = detail.coverImage ? [{ url: detail.coverImage }] : undefined
-
-  return {
-    title: detail.title,
-    description,
-    alternates: { canonical },
-    openGraph: {
-      type: "article",
-      locale: "ko_KR",
-      url: canonical,
-      title: detail.title,
-      description,
-      publishedTime: toIsoDate(detail.date),
-      modifiedTime: detail.lastEditedTime,
-      images,
-    },
-    twitter: {
-      card: "summary_large_image",
-      title: detail.title,
-      description,
-      images: detail.coverImage ? [detail.coverImage] : undefined,
-    },
-  }
+  return articleMetadata({ path: canonical, title: detail.title, description, image: detail.coverImage || undefined, publishedAt: detail.kind === "announcement" ? detail.date : undefined, modifiedAt: detail.lastEditedTime })
 }
 
 export default async function NewsDetailPage({
@@ -107,12 +86,13 @@ export default async function NewsDetailPage({
       <Header />
 
       <article>
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(articleJsonLd({ path: getNewsDetailHref(detail.id), title: detail.title, description: getDescription(detail.description, detail.markdown), image: detail.coverImage || undefined, publishedAt: detail.kind === "announcement" ? detail.date : undefined, modifiedAt: detail.lastEditedTime, citations: detail.kind === "announcement" && detail.externalUrl ? [detail.externalUrl] : [] })).replace(/</g, "\\u003c") }} />
         <header className="relative overflow-hidden bg-primary py-14 text-primary-foreground lg:py-20">
           <div className="absolute inset-0 bg-[url('/grid-pattern.svg')] opacity-5" />
           <div className="relative mx-auto max-w-4xl px-4 lg:px-8">
             <Link
               href="/news"
-              className="mb-8 inline-flex items-center gap-2 text-sm font-medium text-primary-foreground/75 transition-colors hover:text-primary-foreground"
+              className="mb-8 inline-flex items-center gap-2 text-sm font-medium text-primary-foreground/85 transition-colors hover:text-primary-foreground"
             >
               <ArrowLeft className="h-4 w-4" aria-hidden="true" />
               행사·소식 목록
@@ -132,7 +112,7 @@ export default async function NewsDetailPage({
               )}
             </div>
 
-            <p className="mb-3 text-sm font-medium text-primary-foreground/65">
+            <p className="mb-3 text-sm font-medium text-primary-foreground/85">
               {kindLabel}
             </p>
             <h1 className="max-w-3xl break-keep font-serif text-3xl font-bold leading-tight sm:text-4xl lg:text-5xl">
@@ -140,7 +120,7 @@ export default async function NewsDetailPage({
             </h1>
 
             {(detail.date || detail.location) && (
-              <div className="mt-7 flex flex-wrap gap-x-6 gap-y-3 text-sm text-primary-foreground/75">
+              <div className="mt-7 flex flex-wrap gap-x-6 gap-y-3 text-sm text-primary-foreground/85">
                 {detail.date && (
                   <time
                     dateTime={isoDate}

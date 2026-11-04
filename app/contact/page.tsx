@@ -6,6 +6,8 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { ContactForm } from "@/components/contact-form"
 import { pageMetadata } from "@/lib/site"
+import { CooperationGuide } from "@/components/cooperation-guide"
+import { ProfileDownload } from "@/components/profile-download"
 
 export const metadata: Metadata = pageMetadata("/contact", "사업·협업 문의", "리빙랩 운영, 청년정책·청년지원사업, 거버넌스 설계와 AI 활용 등 협동조합 소이랩의 사업·교육·협업을 문의하세요. 온라인 문의, 전화, 이메일로 상담할 수 있습니다.")
 
@@ -45,7 +47,7 @@ export default function ContactPage() {
         <section className="bg-primary py-16 text-primary-foreground lg:py-24">
           <div className="mx-auto max-w-7xl px-4 lg:px-8">
             <div className="max-w-3xl">
-              <p className="mb-3 text-sm font-semibold tracking-[0.18em] text-primary-foreground/70">
+              <p className="mb-3 text-sm font-semibold tracking-[0.18em] text-primary-foreground/85">
                 CONTACT SOILAB
               </p>
               <h1 className="font-serif text-4xl font-bold tracking-tight sm:text-5xl">
@@ -110,6 +112,8 @@ export default function ContactPage() {
                 </a>
               </Button>
             </div>
+            <div className="mt-12"><ProfileDownload /></div>
+            <div className="mt-16"><CooperationGuide /></div>
           </div>
         </section>
       </main>

@@ -4,6 +4,7 @@ import { GoogleAnalytics } from '@next/third-parties/google'
 import './globals.css'
 import './fonts.css'
 import { siteGraph } from '@/lib/site'
+import { InteractionAnalytics } from '@/components/interaction-analytics'
 
 const siteUrl = 'https://www.soilabcoop.kr'
 
@@ -73,6 +74,7 @@ export default function RootLayout({
       <body className="font-sans antialiased">
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(siteGraph).replace(/</g, '\\u003c') }} />
         {children}
+        <InteractionAnalytics />
         {process.env.NODE_ENV === 'production' && <Analytics />}
         {process.env.NEXT_PUBLIC_GA_ID && (
           <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_ID} />

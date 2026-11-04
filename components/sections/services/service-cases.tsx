@@ -31,8 +31,9 @@ export function ServiceCases() {
                 <p className="text-sm font-medium leading-7 text-foreground">{project.question}</p>
                 <p className="mt-4 text-sm leading-7 text-muted-foreground">{project.role}</p>
                 <p className="mb-6 mt-5 border-l-2 border-accent pl-3 text-xs leading-6 text-primary">{project.output}</p>
+                <div className="mb-6 rounded-lg bg-secondary/60 p-4"><p className="text-xs font-medium text-muted-foreground">{project.period} · 공개 사례 요약</p><p className="mt-2 text-sm font-semibold leading-7 text-primary">{project.result}</p></div>
                 <a href={project.href} target="_blank" rel="noopener noreferrer" className="mt-auto inline-flex items-center gap-2 self-start text-sm font-semibold text-primary underline-offset-4 hover:underline">
-                  수행 과정 자세히 보기<ArrowUpRight className="h-4 w-4" aria-hidden="true" /><span className="sr-only"> (새 창)</span>
+                  결과·산정 근거 보기<ArrowUpRight className="h-4 w-4" aria-hidden="true" /><span className="sr-only"> (새 창)</span>
                 </a>
               </div>
             </article>

@@ -1,7 +1,7 @@
 "use client"
 
 import Link from "next/link"
-import { useState } from "react"
+import { useRef, useState } from "react"
 import { usePathname } from "next/navigation"
 import { Menu, X } from "lucide-react"
 import { Button } from "@/components/ui/button"
@@ -20,12 +20,13 @@ const navigation = [
 export function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const pathname = usePathname()
+  const menuButton = useRef<HTMLButtonElement>(null)
 
   const isActive = (href: string) =>
     href === "/" ? pathname === "/" : pathname.startsWith(href)
 
   return (
-    <header className="sticky top-0 z-50 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80 border-b border-border">
+    <header onKeyDown={(event) => { if (event.key === "Escape" && mobileMenuOpen) { setMobileMenuOpen(false); menuButton.current?.focus() } }} className="sticky top-0 z-50 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80 border-b border-border">
       <nav className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 lg:px-8">
         <div className="flex lg:flex-1">
           <Link href="/" className="-m-1.5 p-1.5">
@@ -37,6 +38,7 @@ export function Header() {
         
         <div className="flex lg:hidden">
           <button
+            ref={menuButton}
             type="button"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             className="-m-2.5 inline-flex items-center justify-center rounded-md p-2.5 text-foreground"
@@ -95,7 +97,7 @@ export function Header() {
             ))}
             <div className="pt-2">
               <Button asChild className="w-full">
-                <Link href="/contact">문의하기</Link>
+                <Link href="/contact" onClick={() => setMobileMenuOpen(false)}>문의하기</Link>
               </Button>
             </div>
           </div>
