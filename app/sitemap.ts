@@ -9,7 +9,7 @@ const siteUrl = "https://www.soilabcoop.kr"
 export const revalidate = 60
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const routes = ["", "/about", "/services", "/impact", "/insights", "/news", "/contact"]
+  const routes = ["", "/about", "/services", "/impact", "/insights", "/news", "/contact", "/privacy"]
   const [events, announcements, insights] = await Promise.all([
     getEvents(),
     getAnnouncements(),
@@ -19,7 +19,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const staticRoutes: MetadataRoute.Sitemap = routes.map((route) => ({
     url: `${siteUrl}${route}`,
     changeFrequency: route === "/news" ? "weekly" : "monthly",
-    priority: route === "" ? 1 : 0.8,
+    priority: route === "" ? 1 : route === "/privacy" ? 0.2 : 0.8,
   }))
 
   const newsRoutes: MetadataRoute.Sitemap = [

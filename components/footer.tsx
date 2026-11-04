@@ -73,10 +73,11 @@ export function Footer() {
           </div>
         </div>
 
-        <div className="mt-12 border-t border-primary-foreground/20 pt-8">
+        <div className="mt-12 flex flex-col items-center justify-between gap-3 border-t border-primary-foreground/20 pt-8 sm:flex-row">
           <p className="text-center text-sm text-primary-foreground/85">
             © {new Date().getFullYear()} 협동조합 소이랩. All rights reserved.
           </p>
+          <Link href="/privacy" className="inline-flex min-h-10 items-center text-sm font-medium text-primary-foreground/85 underline underline-offset-4 hover:text-primary-foreground">문의메일 개인정보 안내</Link>
         </div>
       </div>
     </footer>

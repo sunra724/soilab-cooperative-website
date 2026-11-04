@@ -1,5 +1,6 @@
 import { createHash, createHmac } from "node:crypto"
 import { z } from "zod"
+import { inquiryPrivacy } from "./inquiry-privacy.mjs"
 
 const inputSchema = z.object({
   name: z.string().trim().min(1).max(100),
@@ -7,6 +8,7 @@ const inputSchema = z.object({
   topic: z.string().trim().min(1).max(80).regex(/^[^\r\n]+$/),
   message: z.string().trim().min(10).max(4000),
   consent: z.literal(true),
+  consentVersion: z.literal(inquiryPrivacy.version),
   website: z.string().max(200).default(""),
   submissionId: z.string().uuid(),
 }).strict()
@@ -41,6 +43,7 @@ export async function handleContact(request: Request, { env = process.env, fetch
     input = JSON.parse(Buffer.concat(chunks).toString("utf8"))
   } catch { return result(400, { error: "문의 내용을 확인해 주세요." }) }
 
+  if (input && typeof input === "object" && (!('consentVersion' in input) || input.consentVersion !== inquiryPrivacy.version)) return result(400, { error: "문의메일 정보 이용 안내가 업데이트되었습니다. 페이지를 새로고침한 뒤 내용을 확인하고 다시 접수해 주세요." })
   const parsed = inputSchema.safeParse(input)
   if (!parsed.success) return result(400, { error: "연락처와 문의 내용을 확인하고 개인정보 이용에 동의해 주세요." })
   const data = parsed.data
@@ -61,7 +64,7 @@ export async function handleContact(request: Request, { env = process.env, fetch
     requests.set(key, [...recent, time])
   }
 
-  const text = [`접수번호: ${data.submissionId}`, `기관·담당자: ${data.name}`, `회신 이메일: ${data.email}`, `문의 분야: ${data.topic}`, "", data.message].join("\n")
+  const text = [`접수번호: ${data.submissionId}`, `문의 정보 수집·이용 동의: 확인 (${data.consentVersion})`, `보유·이용: ${inquiryPrivacy.retention}`, `기관·담당자: ${data.name}`, `회신 이메일: ${data.email}`, `문의 분야: ${data.topic}`, "", data.message].join("\n")
   const fingerprint = createHash("sha256").update(text).digest("hex").slice(0, 32)
   try {
     const response = await fetcher("https://api.resend.com/emails", {

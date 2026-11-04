@@ -2,9 +2,10 @@ import assert from 'node:assert/strict'
 import test from 'node:test'
 import { randomUUID } from 'node:crypto'
 import { handleContact } from '../lib/contact.ts'
+import { inquiryPrivacy } from '../lib/inquiry-privacy.mjs'
 
 const env = { CONTACT_RESEND_API_KEY: 'test-private-key', CONTACT_FROM_EMAIL: 'Website <contact@soilabcoop.kr>', CONTACT_TO_EMAIL: 'soilabcoop@gmail.com' }
-const valid = () => ({ name: '테스트 기관 담당자', email: 'reply@example.com', topic: '리빙랩 운영', message: '테스트용 문의 내용입니다. 외부로 발송하지 않습니다.', consent: true, website: '', submissionId: randomUUID() })
+const valid = () => ({ name: '테스트 기관 담당자', email: 'reply@example.com', topic: '리빙랩 운영', message: '테스트용 문의 내용입니다. 외부로 발송하지 않습니다.', consent: true, consentVersion: inquiryPrivacy.version, website: '', submissionId: randomUUID() })
 function request(body, extra = {}) {
   return new Request('https://www.soilabcoop.kr/api/contact', { method: 'POST', headers: { origin: 'https://www.soilabcoop.kr', 'content-type': 'application/json', ...extra }, body: typeof body === 'string' ? body : JSON.stringify(body) })
 }
@@ -24,8 +25,21 @@ test('valid contact is accepted only after the mail provider returns a receipt; 
   assert.equal(sent[0].payload.reply_to, input.email)
   assert.equal(sent[0].payload.html, undefined)
   assert.ok(sent[0].payload.text.includes(input.message))
+  assert.ok(sent[0].payload.text.includes(inquiryPrivacy.version))
+  assert.ok(sent[0].payload.text.includes(inquiryPrivacy.retention))
   assert.equal(response.headers.get('cache-control'), 'no-store')
   assert.ok(response.headers.get('x-robots-tag').includes('noindex'))
+})
+
+test('missing or stale consent wording never sends an inquiry under a different notice', async () => {
+  for (const version of [undefined, 'outdated-notice']) {
+    const input = valid()
+    if (version === undefined) delete input.consentVersion
+    else input.consentVersion = version
+    const response = await handleContact(request(input), { env, fetcher: neverSend })
+    assert.equal(response.status, 400)
+    assert.match((await response.json()).error, /새로고침/)
+  }
 })
 
 test('a repeated submission keeps the provider idempotency key; changed content gets a new key', async () => {

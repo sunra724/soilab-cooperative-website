@@ -1,9 +1,11 @@
 "use client"
 
 import { useRef, useState, type FormEvent } from "react"
+import Link from "next/link"
 import { sendGAEvent } from "@next/third-parties/google"
 import { ArrowRight, CheckCircle2, Loader2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { inquiryPrivacy } from "@/lib/inquiry-privacy.mjs"
 
 const fieldClass = "mt-2 w-full rounded-lg border border-input bg-background px-4 py-3 text-base text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 disabled:opacity-60"
 
@@ -27,7 +29,7 @@ export function ContactForm() {
       const response = await fetch("/api/contact", {
         signal: AbortSignal.timeout(20_000),
         method: "POST", headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name: values.get("name"), email: values.get("email"), topic: values.get("topic"), message: values.get("message"), consent: values.get("consent") === "on", website: values.get("website") || "", submissionId: submissionId.current }),
+        body: JSON.stringify({ name: values.get("name"), email: values.get("email"), topic: values.get("topic"), message: values.get("message"), consent: values.get("consent") === "on", consentVersion: inquiryPrivacy.version, website: values.get("website") || "", submissionId: submissionId.current }),
       })
       const result = await response.json().catch(() => null)
       if (!response.ok || result?.ok !== true) {
@@ -64,10 +66,14 @@ export function ContactForm() {
           <label className="text-sm font-semibold sm:col-span-2">문의 내용 <span className="font-normal text-muted-foreground">(필수)</span><textarea name="message" required minLength={10} maxLength={4000} rows={6} className={fieldClass} placeholder="사업 대상과 지역, 예상 일정, 함께 논의할 내용을 알려주세요. (10자 이상)" /></label>
           <div className="hidden" aria-hidden="true"><label>웹사이트<input name="website" tabIndex={-1} autoComplete="off" /></label></div>
           <div className="rounded-lg bg-secondary/40 p-4 text-sm leading-7 text-muted-foreground sm:col-span-2">
-            <p>기관·담당자명, 이메일, 문의 분야·내용은 문의에 답변하기 위해 담당자에게 이메일로 전달됩니다. 주민등록번호·건강정보 등 민감한 개인정보는 적지 말아주세요.</p>
+            <p>문의 내용은 담당자에게 이메일로 전달됩니다. 주민등록번호·건강정보 등 민감한 개인정보는 적지 말아주세요.</p>
+            <dl className="mt-3 space-y-2">
+              {[["이용 목적", inquiryPrivacy.purpose], ["수집 항목", inquiryPrivacy.items], ["보유·이용 기간", inquiryPrivacy.retention]].map(([label, value]) => <div key={label}><dt className="font-semibold text-foreground">{label}</dt><dd>{value}</dd></div>)}
+            </dl>
             <p className="mt-2">동의를 거부할 수 있으며, 동의하지 않으면 온라인 문의를 접수할 수 없습니다. 일반 사업 안내는 대표 전화로 문의할 수 있습니다.</p>
-            <p className="mt-2">개인정보 문의·열람·정정·삭제 요청 창구: 경영지원실 · <a href="mailto:soilabcoop@gmail.com" className="font-medium text-primary underline underline-offset-4">soilabcoop@gmail.com</a></p>
-            <label className="mt-3 flex items-start gap-3 font-medium text-foreground"><input name="consent" type="checkbox" required className="mt-1.5 h-4 w-4 shrink-0 accent-primary" />입력한 정보를 문의 답변에 사용하는 데 동의합니다. (필수)</label>
+            <p className="mt-2">문의메일의 정보 확인·정정·삭제 요청: {inquiryPrivacy.department} · <a href="mailto:soilabcoop@gmail.com" className="font-medium text-primary underline underline-offset-4">soilabcoop@gmail.com</a></p>
+            <Link href="/privacy" target="_blank" rel="noopener noreferrer" className="mt-2 inline-flex min-h-10 items-center font-semibold text-primary underline underline-offset-4">문의메일 개인정보 안내 자세히 보기<span className="sr-only"> (새 창)</span></Link>
+            <label className="mt-3 flex items-start gap-3 font-medium text-foreground"><input name="consent" type="checkbox" required className="mt-1.5 h-4 w-4 shrink-0 accent-primary" /><span>문의메일 처리에 필요한 정보의 수집·이용에 동의합니다. (필수)</span></label>
           </div>
         </fieldset>
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between"><p className="text-xs leading-6 text-muted-foreground">바로 상담이 필요하시면 <a href="tel:053-941-9003" className="font-semibold text-primary underline underline-offset-4">053-941-9003</a>으로 연락해 주세요.</p><Button type="submit" size="lg" disabled={pending} className="w-full sm:w-auto">{pending ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" aria-hidden="true" />접수 중</> : <>문의 보내기<ArrowRight className="ml-2 h-4 w-4" aria-hidden="true" /></>}</Button></div>
