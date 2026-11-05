@@ -21,7 +21,7 @@ export function ServiceDetailCards() {
                     <Icon className="h-7 w-7 shrink-0 text-primary" aria-hidden="true" />
                     <h2 id={`${service.id}-title`} className="font-serif text-2xl font-bold tracking-tight sm:text-3xl">{service.title}</h2>
                   </div>
-                  <p className="mt-5 max-w-md text-xl font-medium leading-9 text-primary">{service.headline}</p>
+                  <p className="mt-5 max-w-md break-keep text-xl font-medium leading-9 text-primary">{service.headline}</p>
                 </div>
                 <div className="lg:pt-8">
                   <p className="text-base leading-8 text-muted-foreground">{service.description}</p>
@@ -52,6 +52,16 @@ export function ServiceDetailCards() {
                   {service.linkLabel}<ArrowUpRight className="h-4 w-4" aria-hidden="true" /><span className="sr-only"> (새 창)</span>
                 </a>
               </div>
+              {service.id === "livinglab" && (
+                <div className="mt-5 flex flex-wrap gap-x-7 gap-y-3 text-sm text-primary">
+                  <a href="https://lab.soilabcoop.kr/university" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 underline-offset-4 hover:underline">
+                    대학 현장 프로젝트 운영안<ArrowUpRight className="h-4 w-4" aria-hidden="true" /><span className="sr-only"> (새 창)</span>
+                  </a>
+                  <a href="https://lab.soilabcoop.kr/cases" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 underline-offset-4 hover:underline">
+                    수행 사례와 결과물 보기<ArrowUpRight className="h-4 w-4" aria-hidden="true" /><span className="sr-only"> (새 창)</span>
+                  </a>
+                </div>
+              )}
               {service.id === "youth" && (
                 <div className="mt-5 flex flex-wrap gap-x-7 gap-y-3 text-sm text-primary">
                   <a href="https://soilab-youth.kr/" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 underline-offset-4 hover:underline">

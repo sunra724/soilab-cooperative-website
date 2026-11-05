@@ -8,12 +8,12 @@ export function ServicesCTA() {
       <div className="mx-auto max-w-7xl px-4 lg:px-8">
         <div className="mx-auto max-w-3xl text-center">
           <h2 className="font-serif text-3xl font-bold text-primary-foreground sm:text-4xl text-balance">
-            지역의 다음 변화를 함께 설계합니다.
+            우리 기관의 과제로 시작해 보세요.
           </h2>
           <p className="mt-6 text-lg text-primary-foreground/80 leading-relaxed">
-            해결하고 싶은 현장의 문제와 사업 대상, 일정을 알려주세요.
-            리빙랩 설계, 청년지원사업 운영, 협력체계 구축과 AI 활용까지
-            기관의 여건에 맞는 수행 범위를 함께 구체화합니다.
+            해결하고 싶은 지역 과제나 준비 중인 사업을 알려주세요.
+            참여 대상과 일정, 예산에 맞춰 리빙랩 기획·운영과 청년지원사업의
+            수행 범위, 남길 결과물을 함께 정합니다.
           </p>
           <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
             <Button
