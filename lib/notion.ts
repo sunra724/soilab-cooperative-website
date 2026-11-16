@@ -1,4 +1,4 @@
-import { Client } from "@notionhq/client"
+import { APIErrorCode, Client, isNotionClientError } from "@notionhq/client"
 import { cache } from "react"
 import { unstable_cache } from "next/cache"
 import type {
@@ -248,13 +248,18 @@ const getPressSourceBlocks = cache(async (pageId: string) => (
   listBlockChildren(pageId)
 ))
 
+// Detail pages must distinguish an unavailable index from an absent article.
+// Throwing during ISR preserves the last successful page instead of caching 404.
+const getPressSourceArticlesStrict = cache(async (): Promise<PressSourceArticle[]> => {
+  const pageId =
+    process.env.NOTION_PRESS_SOURCE_PAGE_ID ?? DEFAULT_PRESS_SOURCE_PAGE_ID
+  return getCachedPressSourceArticles(pageId)
+})
+
 const getPressSourceArticles = cache(
   async (): Promise<PressSourceArticle[]> => {
-    const pageId =
-      process.env.NOTION_PRESS_SOURCE_PAGE_ID ?? DEFAULT_PRESS_SOURCE_PAGE_ID
-
     try {
-      return await getCachedPressSourceArticles(pageId)
+      return await getPressSourceArticlesStrict()
     } catch (error) {
       console.error("[notion] 언론보도 원본 페이지 조회 실패:", error)
       return []
@@ -363,15 +368,21 @@ function cleanEventTitle(title: string): string {
     .trim()
 }
 
-async function getPrimaryDataSourceId(databaseId: string): Promise<string> {
-  const database = await notion.databases.retrieve({ database_id: databaseId })
+// Database identity is stable; reuse it across detail requests to reduce the
+// Notion calls required for a cold page. Publication checks remain uncached.
+const getPrimaryDataSourceId = unstable_cache(
+  async (databaseId: string): Promise<string> => {
+    const database = await notion.databases.retrieve({ database_id: databaseId })
 
-  if (!("data_sources" in database) || database.data_sources.length === 0) {
-    throw new Error(`Notion 데이터베이스(${databaseId})의 데이터 소스를 찾을 수 없습니다.`)
-  }
+    if (!("data_sources" in database) || database.data_sources.length === 0) {
+      throw new Error(`Notion 데이터베이스(${databaseId})의 데이터 소스를 찾을 수 없습니다.`)
+    }
 
-  return database.data_sources[0].id
-}
+    return database.data_sources[0].id
+  },
+  ["public-news-data-source-id-v1"],
+  { revalidate: 3600 },
+)
 
 const hasExplicitlyPublishedPages = cache(
   async (dataSourceId: string): Promise<boolean> => {
@@ -649,7 +660,7 @@ export const getNewsDetail = cache(
 
     if (!pageId) return null
 
-    const sourceArticle = (await getPressSourceArticles()).find(
+    const sourceArticle = (await getPressSourceArticlesStrict()).find(
       (article) => sameId(article.id, pageId),
     )
     if (sourceArticle) {
@@ -670,17 +681,26 @@ export const getNewsDetail = cache(
       }
     }
 
-    if (!eventsDatabaseId || !pressDatabaseId) return null
+    if (!eventsDatabaseId || !pressDatabaseId) {
+      throw new Error("Notion 뉴스 데이터베이스 설정이 필요합니다.")
+    }
 
     try {
       const [pageResponse, eventsDataSourceId, pressDataSourceId] =
         await Promise.all([
-          notion.pages.retrieve({ page_id: pageId }),
+          notion.pages.retrieve({ page_id: pageId }).catch((error: unknown) => {
+            // Only a confirmed missing page is a 404. Rate limits, timeouts,
+            // permission/configuration errors must not become a missing article.
+            if (isNotionClientError(error) && error.code === APIErrorCode.ObjectNotFound) {
+              return null
+            }
+            throw error
+          }),
           getPrimaryDataSourceId(eventsDatabaseId),
           getPrimaryDataSourceId(pressDatabaseId),
         ])
 
-      if (pageResponse.object !== "page" || !("properties" in pageResponse)) {
+      if (!pageResponse || pageResponse.object !== "page" || !("properties" in pageResponse)) {
         return null
       }
 
@@ -761,7 +781,7 @@ export const getNewsDetail = cache(
       }
     } catch (error) {
       console.error("[notion] getNewsDetail 실패:", error)
-      return null
+      throw error
     }
   },
 )
