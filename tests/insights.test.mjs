@@ -33,6 +33,14 @@ test("every summary sentence must reference a real extract from its own source",
   assert.throws(() => validateEvidence(wrong, sources), /unknown_or_duplicate/)
 })
 
+test("a summary cannot use an empty or unbounded evidence list", () => {
+  for (const indices of [[], [0, 0, 0, 0, 0]]) {
+    const wrong = draft()
+    wrong.items[0].evidenceIndices[0] = indices
+    assert.throws(() => validateEvidence(wrong, sources), /invalid_evidence_indices/)
+  }
+})
+
 test("a review that leaves fewer than four articles cannot publish", () => {
   assert.throws(() => assembleIssue(draft(), sources, [], period, "2026-10-20T00:00:00.000Z", [sources[0].id]))
 })

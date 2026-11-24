@@ -37,6 +37,8 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: insights-review-${{ github.run_id }}
-          path: .local/insights/review.json
+          path: |
+            .local/insights/review.json
+            .local/insights/draft.json
           if-no-files-found: ignore
           retention-days: 30
