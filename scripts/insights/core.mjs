@@ -16,6 +16,24 @@ export function previousWeek(today) {
 }
 
 export const koreaDay = now => new Intl.DateTimeFormat("sv-SE", { timeZone: "Asia/Seoul" }).format(now)
+
+export function pendingPeriods(archive, today, limit = 4) {
+  const latest = previousWeek(today)
+  if (!Number.isInteger(limit) || limit < 1 || limit > 4) throw new Error("invalid_publication_limit")
+  if (!archive.length) return [latest]
+  const published = new Set(archive.map(issue => issue.id))
+  const first = [...published].sort()[0]
+  const periods = []
+  for (let end = new Date(`${first}T00:00:00Z`); isoDay(end) <= latest.end; end.setUTCDate(end.getUTCDate() + 7)) {
+    const endDay = isoDay(end)
+    if (published.has(endDay)) continue
+    const start = new Date(end)
+    start.setUTCDate(start.getUTCDate() - 6)
+    periods.push({ start: isoDay(start), end: endDay })
+    if (periods.length === limit) break
+  }
+  return periods
+}
 const matchers = [
   ["youth", /고립|은둔|청년|청소년|돌봄|치매|인지건강|외로움/gi],
   ["local", /사회연대경제|사회적경제|협동조합|사회적기업|마을기업|지역경제|지역순환|지역소멸|균형발전|도시재생|지역공동체|사회적가치/gi],
