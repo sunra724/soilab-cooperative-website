@@ -5,8 +5,8 @@ import { getInsights } from "@/lib/insights"
 
 const siteUrl = "https://www.soilabcoop.kr"
 
-// Refresh Notion entries on the same interval as the news listing.
-export const revalidate = 60
+// Automated issues must reach crawlers without a stale metadata-route snapshot.
+export const dynamic = "force-dynamic"
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const routes = ["", "/about", "/services", "/impact", "/insights", "/news", "/contact", "/privacy"]
