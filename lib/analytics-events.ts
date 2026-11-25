@@ -9,5 +9,10 @@ export function linkInteraction(href: string, base: string, placement: string) {
   if (url.protocol === "https:" && url.hostname === "lab.soilabcoop.kr" && /^\/cases\/[a-z0-9-]+$/.test(url.pathname)) {
     return { name: "select_content", params: { ...context, content_type: "case_study", item_id: url.pathname.split("/").pop()! } }
   }
+  const storyHosts: Record<string, string> = { 'www.soilab-youth.kr': 'youth', 'care.soilabcoop.kr': 'care', 'lab.soilabcoop.kr': 'lab' }
+  const source = storyHosts[url.hostname]
+  if (url.protocol === 'https:' && source && /^\/(series|research\/notes|press|stream)(\/|$)/.test(url.pathname) && /^\/[a-z0-9/-]+$/.test(url.pathname)) {
+    return { name: 'select_content', params: { ...context, content_type: 'research_story', source, item_id: url.pathname } }
+  }
   return null
 }

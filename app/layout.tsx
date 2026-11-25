@@ -23,6 +23,7 @@ export const metadata: Metadata = {
   applicationName: '협동조합 소이랩',
   keywords: ['협동조합 소이랩', '리빙랩 운영', '청년정책', '청년지원사업', '고립은둔청년', '거버넌스', 'AI 활용', '사회혁신', 'AI 사회혁신', 'SOILAB 2030', '필란트로피', 'ESG 컨설팅', '인지건강디자인', '대구'],
   alternates: {
+    types: { 'application/rss+xml': '/feed.xml' },
     canonical: '/',
   },
   openGraph: {

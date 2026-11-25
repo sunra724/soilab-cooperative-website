@@ -20,3 +20,13 @@ test('case clicks are restricted to the official domain and a public slug',()=>{
   assert.equal(linkInteraction('https://unrelated.example/contact',base,'main'),null)
   assert.equal(linkInteraction('https://lab.soilabcoop.kr/cases/private@example.com',base,'main'),null)
 })
+
+test('research story clicks record only public path and source',()=>{
+  const event=linkInteraction('https://care.soilabcoop.kr/series/care-stories/3?email=private@example.com',base,'main')
+  assert.equal(event.name,'select_content')
+  assert.equal(event.params.content_type,'research_story')
+  assert.equal(event.params.source,'care')
+  assert.equal(event.params.item_id,'/series/care-stories/3')
+  assert.ok(!JSON.stringify(event).includes('private@example.com'))
+  assert.equal(linkInteraction('https://care.soilabcoop.kr.unrelated.example/series/care-stories/3',base,'main'),null)
+})

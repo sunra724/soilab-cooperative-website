@@ -5,6 +5,7 @@ import { ValuesSection } from "@/components/sections/values-section"
 import { ServicesSection } from "@/components/sections/services-section"
 import { StatsSection } from "@/components/sections/stats-section"
 import { NewsSection } from "@/components/sections/news-section"
+import { StoriesSection } from "@/components/sections/stories-section"
 import { InsightsSection } from "@/components/sections/insights-section"
 import { SocialImpactSection } from "@/components/sections/social-impact-section"
 import { ServiceCases } from "@/components/sections/services/service-cases"
@@ -20,6 +21,7 @@ export default function HomePage() {
         <ServicesSection />
         <ServiceCases />
         <StatsSection />
+        <StoriesSection />
         <InsightsSection />
         <NewsSection />
         <SocialImpactSection />
