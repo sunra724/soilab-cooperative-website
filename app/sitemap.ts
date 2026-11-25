@@ -9,7 +9,7 @@ const siteUrl = "https://www.soilabcoop.kr"
 export const dynamic = "force-dynamic"
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const routes = ["", "/about", "/services", "/impact", "/insights", "/news", "/contact", "/privacy"]
+  const routes = ["", "/about", "/services", "/impact", "/stories", "/insights", "/news", "/contact", "/privacy"]
   const [events, announcements, insights] = await Promise.all([
     getEvents(),
     getAnnouncements(),
